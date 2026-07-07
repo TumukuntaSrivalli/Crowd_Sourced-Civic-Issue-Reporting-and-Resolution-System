@@ -2,8 +2,12 @@ import ComplaintForm from "@/components/complaint/ComplaintForm";
 
 export default function NewComplaintPage() {
   return (
-    <main className="mx-auto max-w-3xl p-8">
+    <div>
+      <h1 className="text-2xl font-bold mb-4">
+        Submit New Complaint
+      </h1>
+
       <ComplaintForm />
-    </main>
+    </div>
   );
 }

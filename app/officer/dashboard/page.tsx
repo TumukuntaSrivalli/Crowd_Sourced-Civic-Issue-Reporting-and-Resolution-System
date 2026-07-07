@@ -1,150 +1,394 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
-import { getOfficerComplaints, updateComplaint } from "@/services/complaintService";
+import { getOfficerComplaints, updateComplaint, assignComplaintToOfficer } from "@/services/complaintService";
 import { Complaint } from "@/types/complaint";
-
 import { useAuth } from "@/context/AuthContext";
 import { canAccessOfficerDashboard } from "@/utils/roleGuard";
 import { useRouter } from "next/navigation";
-
 import { officers } from "@/constants/officers";
-import { assignComplaintToOfficer } from "@/services/complaintService";
+import { getOfficerNotifications }
+from "@/services/notificationService";
 
 export default function OfficerDashboard() {
-  const [complaints, setComplaints] = useState<
-    (Complaint & { id: string })[]
-  >([]);
-
+  const [notifications,setNotifications]=useState<any[]>([]);
+  const [complaints, setComplaints] = useState<(Complaint & { id: string })[]>([]);
   const [loading, setLoading] = useState(true);
-  
+
   const { user } = useAuth();
   const router = useRouter();
 
-  console.log("Logged in user:", user);
-  console.log("User role:", user?.role); 
 
-  
   useEffect(() => {
+const loadNotifications=async()=>{
+
+if(!user)return;
+  const data=
+  await getOfficerNotifications(user.uid);
+
+
+  setNotifications(data);
+
+  };
+
+
+  loadNotifications();
+
+
+  },[user]);
+
     if (user && !canAccessOfficerDashboard(user.role)) {
       router.push("/dashboard");
     }
-  }, [user, router])
 
-useEffect(() => {
-  const fetchComplaints = async () => {
-    try {
-      if (!user) return; // ✅ important safety check
+   [user, router]
 
-      const data = await getOfficerComplaints(user.uid);
 
-      setComplaints(data as (Complaint & { id: string })[]);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
-  fetchComplaints();
-}, [user]);
+  useEffect(() => {
+
+    const fetchComplaints = async () => {
+
+      try {
+
+        if (!user) return;
+
+        const data = await getOfficerComplaints(user.uid);
+
+        setComplaints(data as (Complaint & { id: string })[]);
+
+      } catch (error) {
+
+        console.error(error);
+
+      } finally {
+
+        setLoading(false);
+
+      }
+
+    };
+
+
+    fetchComplaints();
+
+  }, [user]);
+
+
 
   const handleStatusUpdate = async (
     id: string,
     status: "Assigned" | "In Progress" | "Resolved"
   ) => {
+
     try {
+
       await updateComplaint(id, { status });
 
-      // refresh UI
+
       setComplaints((prev) =>
         prev.map((c) =>
           c.id === id ? { ...c, status } : c
         )
       );
+
+
     } catch (error) {
+
       console.error(error);
+
     }
+
   };
 
+
+
   if (loading) {
+
     return (
-      <main className="p-8">
-        <h1 className="text-xl font-bold">Loading complaints...</h1>
+
+      <main className="min-h-screen bg-black text-white px-6 py-12">
+
+        <h1 className="text-4xl font-extrabold">
+          Loading Officer Dashboard...
+        </h1>
+
       </main>
+
     );
+
   }
 
-  return (
-    <main className="p-8">
-      <h1 className="text-3xl font-bold mb-6">
+
+
+return (
+
+  <main
+    className="
+    min-h-screen
+    bg-black
+    text-white
+    px-6
+    py-12
+    "
+  >
+
+    <div className="mx-auto max-w-6xl">
+
+
+      <h1
+        className="
+        mb-8
+        text-4xl
+        font-extrabold
+        bg-linear-to-r
+        from-blue-400
+        via-cyan-400
+        to-white
+        bg-clip-text
+        text-transparent
+        "
+      >
         Officer Dashboard
       </h1>
 
+
+
+      {/* 🔔 Notifications Section - ADD HERE */}
+
+      <div
+        className="
+        mb-6
+        rounded-xl
+        bg-blue-900/40
+        border
+        border-blue-700
+        p-5
+        "
+      >
+
+        <h2
+          className="
+          text-xl
+          font-bold
+          mb-3
+          "
+        >
+          🔔 Notifications
+        </h2>
+
+
+        {
+          notifications.length === 0 ? (
+
+            <p className="text-zinc-400">
+              No new notifications
+            </p>
+
+          ) : (
+
+            notifications.map((n) => (
+
+              <p
+                key={n.id}
+                className="text-zinc-200 mb-2"
+              >
+                {n.message}
+              </p>
+
+            ))
+
+          )
+        }
+
+      </div>
+
+
+
+      {/* Complaints Section */}
+
       <div className="space-y-6">
+
+
         {complaints.map((complaint) => (
+
+
           <div
             key={complaint.id}
-            className="border rounded-lg p-4 bg-white shadow"
+            className="
+            rounded-2xl
+            border
+            border-zinc-800
+            bg-zinc-900/60
+            backdrop-blur-xl
+            p-6
+            shadow-2xl
+            hover:border-cyan-500/50
+            transition
+            "
           >
-            <h2 className="text-xl font-semibold">
+
+
+            <h2 className="text-2xl font-bold text-cyan-400">
               {complaint.title}
             </h2>
 
-            <p className="text-gray-600 mt-2">
+
+
+            <p className="mt-3 text-zinc-400">
               {complaint.description}
             </p>
 
-            <p className="mt-2">
-              <strong>Status:</strong> {complaint.status}
+
+
+            <p className="mt-4 text-zinc-300">
+
+              <strong className="text-white">
+                Status:
+              </strong>{" "}
+
+              {complaint.status}
+
             </p>
 
+
+
             <select
-                onChange={(e) =>
-                    assignComplaintToOfficer(complaint.id!, e.target.value)
-                }
-                className="border p-2 rounded mt-3"
-                >
-                <option>Select Officer</option>
-                {officers.map((o) => (
-                    <option key={o.id} value={o.id}>
-                    {o.name}
-                    </option>
-                ))}
-                </select>
 
-            <div className="mt-4 flex gap-2">
+              onChange={(e)=>
+                assignComplaintToOfficer(
+                  complaint.id,
+                  e.target.value
+                )
+              }
+
+              className="
+              mt-5
+              w-full
+              rounded-xl
+              border
+              border-zinc-700
+              bg-black
+              px-4
+              py-3
+              text-white
+              "
+
+            >
+
+              <option>Select Officer</option>
+
+
+              {officers.map((o)=>(
+
+                <option key={o.id} value={o.id}>
+
+                  {o.name}
+
+                </option>
+
+              ))}
+
+
+            </select>
+
+
+
+
+            <div className="mt-6 flex flex-wrap gap-4">
+
+
               <button
                 onClick={() =>
-                  handleStatusUpdate(complaint.id!, "Assigned")
+                  handleStatusUpdate(
+                    complaint.id,
+                    "Assigned"
+                  )
                 }
-                className="bg-blue-500 text-white px-3 py-1 rounded"
+
+                className="
+                rounded-xl
+                bg-linear-to-r
+                from-blue-600
+                to-cyan-500
+                px-5
+                py-2
+                font-semibold
+                "
               >
+
                 Assign
+
               </button>
+
+
 
               <button
                 onClick={() =>
-                  handleStatusUpdate(complaint.id!, "In Progress")
+                  handleStatusUpdate(
+                    complaint.id,
+                    "In Progress"
+                  )
                 }
-                className="bg-purple-500 text-white px-3 py-1 rounded"
+
+                className="
+                rounded-xl
+                bg-linear-to-r
+                from-purple-600
+                to-pink-500
+                px-5
+                py-2
+                font-semibold
+                "
               >
+
                 In Progress
+
               </button>
+
+
+
 
               <button
                 onClick={() =>
-                  handleStatusUpdate(complaint.id!, "Resolved")
+                  handleStatusUpdate(
+                    complaint.id,
+                    "Resolved"
+                  )
                 }
-                className="bg-green-600 text-white px-3 py-1 rounded"
+
+                className="
+                rounded-xl
+                bg-linear-to-r
+                from-green-600
+                to-emerald-500
+                px-5
+                py-2
+                font-semibold
+                "
               >
+
                 Resolve
+
               </button>
+
+
             </div>
+
+
           </div>
+
+
         ))}
+
+
       </div>
-    </main>
-  );
+
+
+    </div>
+
+
+  </main>
+
+);
 }

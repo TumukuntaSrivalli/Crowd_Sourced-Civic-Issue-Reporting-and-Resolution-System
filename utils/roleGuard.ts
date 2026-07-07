@@ -4,7 +4,7 @@ export const canAccessOfficerDashboard = (role: UserRole) => {
   return role === "officer" || role === "admin";
 };
 
-export const canAccessAdminDashboard = (role: UserRole) => {
+export const canAccessAdminDashboard = (role?: UserRole) => {
   return role === "admin";
 };
 

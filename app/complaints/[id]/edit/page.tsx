@@ -85,7 +85,7 @@ export default function EditComplaintPage() {
 
 
   return (
-    <main className="min-h-screen bg-slate-950 p-8 text-white">
+    <main className="min-h-screen bg-black text-white p-8">
 
       <div className="max-w-xl mx-auto bg-slate-900 rounded-xl p-6 border border-slate-800">
 

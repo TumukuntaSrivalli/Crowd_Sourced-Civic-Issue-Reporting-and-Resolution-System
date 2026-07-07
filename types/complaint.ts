@@ -33,6 +33,11 @@ export interface Complaint {
 
   assignedTo?: string;
 
+department?: string;
+
+recommendedOfficer?: string;
+
+priorityScore?: number;
   aiCategory?: string;
   aiSeverity?: "Low" | "Medium" | "High";
   aiConfidence?: number;

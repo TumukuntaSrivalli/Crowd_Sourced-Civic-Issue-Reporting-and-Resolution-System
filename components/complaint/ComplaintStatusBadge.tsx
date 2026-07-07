@@ -3,26 +3,79 @@ interface Props {
 }
 
 export default function ComplaintStatusBadge({ status }: Props) {
+
   const getColor = () => {
+
     switch (status) {
+
       case "Pending":
-        return "bg-yellow-100 text-yellow-800";
+        return `
+        bg-yellow-500/10
+        text-yellow-400
+        border-yellow-500/30
+        `;
+
       case "Assigned":
-        return "bg-blue-100 text-blue-800";
+        return `
+        bg-blue-500/10
+        text-blue-400
+        border-blue-500/30
+        `;
+
       case "In Progress":
-        return "bg-purple-100 text-purple-800";
+        return `
+        bg-purple-500/10
+        text-purple-400
+        border-purple-500/30
+        `;
+
       case "Resolved":
-        return "bg-green-100 text-green-800";
+        return `
+        bg-green-500/10
+        text-green-400
+        border-green-500/30
+        `;
+
       case "Rejected":
-        return "bg-red-100 text-red-800";
+        return `
+        bg-red-500/10
+        text-red-400
+        border-red-500/30
+        `;
+
       default:
-        return "bg-gray-100 text-gray-800";
+        return `
+        bg-zinc-500/10
+        text-zinc-400
+        border-zinc-500/30
+        `;
+
     }
+
   };
 
+
   return (
-    <span className={`px-3 py-1 rounded-full text-sm ${getColor()}`}>
+
+    <span
+      className={`
+      inline-flex
+      items-center
+      rounded-full
+      border
+      px-4
+      py-1.5
+      text-sm
+      font-semibold
+      backdrop-blur-md
+      ${getColor()}
+      `}
+    >
+
       {status}
+
     </span>
+
   );
+
 }

@@ -75,7 +75,7 @@ export default function ComplaintDetailsPage() {
   }
 
   return (
-    <main className="mx-auto max-w-4xl p-8">
+    <main className="min-h-screen bg-black text-white mx-auto max-w-4xl p-8">
       <h1 className="mb-6 text-3xl font-bold">Complaint Details</h1>
 
       <div className="space-y-4 rounded-lg border bg-white p-6 shadow-sm">

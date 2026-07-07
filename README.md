@@ -1,36 +1,675 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🏙️ Crowdsourced Civic Issue Reporting and Resolution System
 
-## Getting Started
+A smart AI-powered civic issue management platform that enables citizens to report public problems, helps authorities efficiently manage complaints, and improves issue resolution using Artificial Intelligence, location intelligence, and real-time tracking.
 
-First, run the development server:
+---
+
+# 📌 Project Overview
+
+The **Crowdsourced Civic Issue Reporting and Resolution System** is a full-stack web application designed to bridge the communication gap between citizens and government authorities.
+
+Citizens can report problems such as:
+
+- Road damage
+- Garbage accumulation
+- Water leakage
+- Streetlight failures
+- Drainage issues
+- Traffic-related problems
+
+The system uses:
+
+- AI-based complaint classification
+- Severity prediction
+- Duplicate detection
+- Location tracking
+- Officer assignment
+- Real-time complaint monitoring
+
+to provide a faster and smarter complaint resolution process.
+
+---
+
+# 🎯 Problem Statement
+
+In traditional civic systems:
+
+- Citizens do not have an easy reporting mechanism.
+- Complaints are difficult to track.
+- Authorities struggle to prioritize urgent issues.
+- Duplicate complaints create unnecessary workload.
+- Lack of location information delays resolution.
+
+This platform solves these challenges by providing an intelligent digital solution.
+
+---
+
+# 🚀 Key Features
+
+## 👤 Citizen Module
+
+Citizens can:
+
+✅ Register and Login  
+✅ Submit civic complaints  
+✅ Upload issue images  
+✅ Provide location information  
+✅ Track complaint status  
+✅ View AI analysis results  
+✅ Monitor resolution progress  
+
+
+---
+
+# 📝 Complaint Reporting
+
+Users can submit:
+
+- Complaint title
+- Description
+- Category
+- Severity
+- Image evidence
+- GPS location
+
+
+Example:
+
+```
+Title:
+Large pothole near school
+
+Category:
+Road Damage
+
+Location:
+Latitude: 17.3850
+Longitude: 78.4867
+```
+
+---
+
+# 🤖 Artificial Intelligence Module
+
+The system integrates AI to analyze complaints.
+
+## AI Capabilities
+
+### 1. Complaint Classification
+
+Automatically identifies issue category:
+
+Example:
+
+```
+Input:
+"Garbage is overflowing near my street"
+
+AI Output:
+Category:
+Garbage
+```
+
+
+---
+
+### 2. Severity Detection
+
+AI predicts urgency:
+
+```
+Low
+Medium
+High
+```
+
+Example:
+
+```
+Broken traffic signal:
+
+Severity:
+High
+```
+
+---
+
+### 3. Duplicate Complaint Detection
+
+Detects similar complaints to reduce repeated reports.
+
+Example:
+
+```
+Complaint 1:
+Road damage near school
+
+Complaint 2:
+Pothole near school entrance
+
+
+AI:
+Possible Duplicate
+```
+
+---
+
+### 4. Priority Score
+
+AI generates priority ranking:
+
+Example:
+
+```
+Priority Score:
+92/100
+```
+
+Higher score complaints are handled first.
+
+---
+
+# 👨‍💼 Admin Module
+
+Admins manage the complete complaint workflow.
+
+## Admin Features
+
+### 📋 View All Complaints
+
+Admin can view:
+
+- All citizen complaints
+- Complaint details
+- Images
+- Location
+- Status
+
+
+---
+
+### 👮 Officer Assignment
+
+Admin can assign complaints to officers.
+
+Example:
+
+```
+Road Damage Complaint
+
+Assigned Department:
+Road Department
+
+Officer:
+Road Inspector
+```
+
+---
+
+### 🤖 AI Insights Dashboard
+
+Admin can view:
+
+- AI Category
+- AI Severity
+- Confidence Score
+- Priority Score
+- Recommended Department
+- Duplicate Detection
+
+
+---
+
+### 🗺️ Complaint Map
+
+Interactive map showing complaint locations.
+
+Features:
+
+- Complaint markers
+- Location visualization
+- Area-based monitoring
+
+Future:
+
+- Heatmaps
+- Complaint hotspots
+
+---
+
+# 👮 Officer Module
+
+Officers handle assigned complaints.
+
+Features:
+
+✅ View assigned complaints  
+✅ Verify issue location  
+✅ Update complaint status  
+✅ Add resolution remarks  
+✅ Complete complaint handling  
+
+
+Workflow:
+
+```
+Assigned
+   ↓
+In Progress
+   ↓
+Resolved
+```
+
+---
+
+# 🔄 System Workflow
+
+
+```
+Citizen
+
+   |
+   |
+Submit Complaint
+
+   |
+   |
+AI Analysis
+
+   |
+   |
+Firestore Database
+
+   |
+   |
+Admin Review
+
+   |
+   |
+Officer Assignment
+
+   |
+   |
+Issue Verification
+
+   |
+   |
+Resolution
+
+```
+
+---
+
+# 🏗️ System Architecture
+
+
+```
+Frontend
+(Next.js + React)
+
+        |
+
+Backend Services
+
+        |
+
+Firebase
+
+        |
+
+Firestore Database
+
+        |
+
+AI Services
+
+(OpenAI API)
+
+        |
+
+Cloudinary
+
+(Image Storage)
+
+```
+
+---
+
+# 🛠️ Technology Stack
+
+
+## Frontend
+
+- Next.js
+- React
+- TypeScript
+- Tailwind CSS
+
+
+## Backend
+
+- Firebase Authentication
+- Firebase Firestore
+
+
+## Artificial Intelligence
+
+- OpenAI API
+- NLP based complaint analysis
+
+
+## Image Storage
+
+- Cloudinary
+
+
+## Maps
+
+- React Leaflet
+- OpenStreetMap
+
+
+## Development Tools
+
+- VS Code
+- Git
+- GitHub
+
+---
+
+# 📂 Project Structure
+
+
+```
+Crowdsourced Civic Issue Reporting System
+
+│
+├── frontend
+│
+│   ├── app
+│   │   ├── login
+│   │   ├── register
+│   │   ├── dashboard
+│   │   ├── complaints
+│   │   ├── admin
+│   │   └── officer
+│   │
+│   ├── components
+│   │   ├── complaint
+│   │   ├── map
+│   │   └── Navbar
+│   │
+│   ├── services
+│   │   ├── complaintService.ts
+│   │   ├── authService.ts
+│   │   └── cloudinaryService.ts
+│   │
+│   ├── firebase
+│   │
+│   ├── context
+│   │
+│   ├── types
+│   │
+│   └── utils
+│
+└── README.md
+
+```
+
+---
+
+# 🔥 Firebase Setup
+
+Create Firebase project:
+
+Enable:
+
+```
+Authentication
+    |
+    └── Email/Password
+
+Firestore Database
+
+Storage (Optional)
+
+```
+
+Create collections:
+
+```
+users
+
+complaints
+
+notifications
+
+feedback
+
+```
+
+---
+
+# ☁️ Cloudinary Setup
+
+Used for storing complaint images.
+
+Steps:
+
+1. Create Cloudinary account
+
+2. Create upload preset
+
+3. Add credentials:
+
+```
+NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=
+
+NEXT_PUBLIC_UPLOAD_PRESET=
+
+```
+
+---
+
+# 🔑 Environment Variables
+
+Create:
+
+```
+.env.local
+```
+
+
+Add:
+
+
+```
+NEXT_PUBLIC_FIREBASE_API_KEY=
+
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=
+
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=
+
+NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=
+
+NEXT_PUBLIC_UPLOAD_PRESET=
+
+OPENAI_API_KEY=
+
+```
+
+---
+
+# ▶️ Installation
+
+
+Clone repository:
+
+```bash
+git clone <repository-url>
+```
+
+
+Move into project:
+
+```bash
+cd frontend
+```
+
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+
+Run development server:
+
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Application runs at:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## Learn More
+```
+http://localhost:3000
+```
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# 📊 Database Structure
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
+## Users Collection
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+users
+
+uid
+
+name
+
+email
+
+role
+
+```
+
+Roles:
+
+```
+citizen
+admin
+officer
+```
+
+
+---
+
+## Complaints Collection
+
+
+```
+complaints
+
+title
+
+description
+
+category
+
+severity
+
+status
+
+imageUrl
+
+location
+
+userId
+
+
+AI Fields:
+
+aiCategory
+
+aiSeverity
+
+aiConfidence
+
+aiSummary
+
+priorityScore
+
+department
+
+recommendedOfficer
+
+isDuplicate
+
+```
+
+---
+
+# 🔮 Future Enhancements
+
+
+## Advanced AI
+
+- Image-based issue detection
+- Voice complaint processing
+- Predictive complaint analysis
+
+
+## Smart City Features
+
+- Complaint heatmaps
+- Area risk prediction
+- Automated department routing
+
+
+## Communication
+
+- SMS notifications
+- Email alerts
+- Mobile application
+
+
+## Analytics
+
+- Resolution statistics
+- Department performance
+- Complaint trends
+
+
+---
+
+# 🌟 Project Impact
+
+This platform helps create:
+
+✅ Faster complaint resolution  
+✅ Better citizen-government communication  
+✅ Data-driven decision making  
+✅ Efficient resource allocation  
+✅ Transparent civic management  
+
+
+---
+
+# 👨‍💻 Developed By
+
+**Tumukunta Srivalli**
+
+Computer Science Engineering - Data Science
+
+---
+
+# 📜 License
+
+This project is developed for educational and innovation purposes.
