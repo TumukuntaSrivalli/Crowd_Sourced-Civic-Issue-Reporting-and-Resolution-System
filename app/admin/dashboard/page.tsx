@@ -56,27 +56,32 @@ export default function AdminDashboard() {
   }
 
   const handleAssign = async (
-    complaintId: string,
-    officerId: string
-  ) => {
-    try {
-      await assignComplaintToOfficer(complaintId, officerId);
+  complaintId: string,
+  officerId: string
+) => {
+  console.log("Complaint ID:", complaintId);
+  console.log("Officer ID:", officerId);
 
-      setComplaints((prev) =>
-        prev.map((c) =>
-          c.id === complaintId
-            ? {
-                ...c,
-                assignedTo: officerId,
-                status: "Assigned",
-              }
-            : c
-        )
-      );
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  try {
+    await assignComplaintToOfficer(complaintId, officerId);
+
+    console.log("Complaint assigned successfully!");
+
+    setComplaints((prev) =>
+      prev.map((c) =>
+        c.id === complaintId
+          ? {
+              ...c,
+              assignedTo: officerId,
+              status: "Assigned",
+            }
+          : c
+      )
+    );
+  } catch (error) {
+    console.error("Assignment Error:", error);
+  }
+};
 
   if (loading) {
     return (

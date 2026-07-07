@@ -1,100 +1,143 @@
-import {
-  collection,
-  addDoc,
-  getDoc,
-  getDocs,
-  doc,
-  updateDoc,
-  deleteDoc,
-  query,
-  where,
-  serverTimestamp,
-} from "firebase/firestore";
+"use client";
 
-import db from "@/firebase/firestore";
+import { useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+
+import {
+  getComplaintById,
+  updateComplaint,
+} from "@/services/complaintService";
+
 import { Complaint } from "@/types/complaint";
 
-const complaintsCollection = collection(db, "complaints");
+export default function EditComplaintPage() {
+  const params = useParams();
+  const router = useRouter();
 
-/**
- * Create a new complaint
- */
-export const createComplaint = async (complaint: Complaint) => {
-  const docRef = await addDoc(complaintsCollection, {
-    ...complaint,
-    createdAt: serverTimestamp(),
-    updatedAt: serverTimestamp(),
-  });
+  const id = params.id as string;
 
-  return docRef.id;
-};
+  const [complaint, setComplaint] = useState<Complaint | null>(null);
+  const [loading, setLoading] = useState(true);
 
-/**
- * Get complaint by ID
- */
-export const getComplaintById = async (
-  id: string
-): Promise<Complaint | null> => {
-  const docRef = doc(db, "complaints", id);
-  const docSnap = await getDoc(docRef);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
 
-  if (!docSnap.exists()) return null;
+  useEffect(() => {
+    const fetchComplaint = async () => {
+      try {
+        const data = await getComplaintById(id);
 
-  return {
-    id: docSnap.id,
-    ...(docSnap.data() as Complaint),
+        if (data) {
+          setComplaint(data);
+          setTitle(data.title);
+          setDescription(data.description);
+        }
+
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchComplaint();
+    }
+
+  }, [id]);
+
+
+  const handleUpdate = async () => {
+    try {
+      await updateComplaint(id, {
+        title,
+        description,
+      });
+
+      router.push(`/complaints/${id}`);
+
+    } catch (error) {
+      console.error(error);
+    }
   };
-};
 
-/**
- * Get all complaints
- */
-export const getAllComplaints = async () => {
-  const snapshot = await getDocs(complaintsCollection);
 
-  return snapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...(doc.data() as Complaint),
-  }));
-};
+  if (loading) {
+    return (
+      <main className="p-8">
+        <h1 className="text-xl font-bold">
+          Loading complaint...
+        </h1>
+      </main>
+    );
+  }
 
-/**
- * Get complaints submitted by a specific user
- */
-export const getUserComplaints = async (userId: string) => {
-  const q = query(
-    complaintsCollection,
-    where("userId", "==", userId)
+
+  if (!complaint) {
+    return (
+      <main className="p-8">
+        <h1 className="text-xl font-bold">
+          Complaint not found
+        </h1>
+      </main>
+    );
+  }
+
+
+  return (
+    <main className="min-h-screen bg-slate-950 p-8 text-white">
+
+      <div className="max-w-xl mx-auto bg-slate-900 rounded-xl p-6 border border-slate-800">
+
+        <h1 className="text-3xl font-bold mb-6">
+          Edit Complaint
+        </h1>
+
+
+        <div className="space-y-4">
+
+          <div>
+            <label className="block mb-2">
+              Title
+            </label>
+
+            <input
+              value={title}
+              onChange={(e) =>
+                setTitle(e.target.value)
+              }
+              className="w-full p-3 rounded bg-slate-800 border border-slate-700"
+            />
+          </div>
+
+
+          <div>
+            <label className="block mb-2">
+              Description
+            </label>
+
+            <textarea
+              value={description}
+              onChange={(e) =>
+                setDescription(e.target.value)
+              }
+              className="w-full p-3 rounded bg-slate-800 border border-slate-700"
+              rows={5}
+            />
+          </div>
+
+
+          <button
+            onClick={handleUpdate}
+            className="w-full rounded-lg bg-linear-to-r from-cyan-500 to-blue-600 px-6 py-3 text-white"
+          >
+            Update Complaint
+          </button>
+
+        </div>
+
+      </div>
+
+    </main>
   );
-
-  const snapshot = await getDocs(q);
-
-  return snapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...(doc.data() as Complaint),
-  }));
-};
-
-/**
- * Update complaint
- */
-export const updateComplaint = async (
-  complaintId: string,
-  data: Partial<Complaint>
-) => {
-  const docRef = doc(db, "complaints", complaintId);
-
-  await updateDoc(docRef, {
-    ...data,
-    updatedAt: serverTimestamp(),
-  });
-};
-
-/**
- * Delete complaint
- */
-export const deleteComplaint = async (complaintId: string) => {
-  const docRef = doc(db, "complaints", complaintId);
-
-  await deleteDoc(docRef);
-};
+}

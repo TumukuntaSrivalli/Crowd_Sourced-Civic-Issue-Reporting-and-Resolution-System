@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { logoutUser } from "@/services/authService";
 import { useAuth } from "@/context/AuthContext";
+import Link from "next/link";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -38,7 +39,7 @@ export default function DashboardPage() {
       >
         Logout
       </button>
-
+        
     </main>
   );
 }

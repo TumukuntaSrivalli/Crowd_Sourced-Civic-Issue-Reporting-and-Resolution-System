@@ -29,8 +29,8 @@ export function validateComplaint(
   }
 
   if (
-    complaint.latitude === undefined ||
-    complaint.longitude === undefined
+    complaint.location?.latitude === undefined ||
+    complaint.location?.longitude === undefined
   ) {
     errors.push("Please capture your current location.");
   }

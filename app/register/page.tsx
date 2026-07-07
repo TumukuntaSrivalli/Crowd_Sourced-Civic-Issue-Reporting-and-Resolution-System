@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { registerUser } from "@/services/authService";
 import { createUserProfile } from "@/services/userService";
+import Link from "next/link";
 
 interface RegisterFormData {
   fullName: string;
@@ -43,7 +44,7 @@ export default function RegisterPage() {
         uid: user.uid,
         fullName: data.fullName,
         email: data.email,
-        role: "Citizen",
+        role: "citizen",
         });
 
       alert("Registration Successful!");
@@ -134,7 +135,7 @@ export default function RegisterPage() {
               </p>
             )}
           </div>
-
+        
           <button
             type="submit"
             disabled={loading}
@@ -142,6 +143,17 @@ export default function RegisterPage() {
           >
             {loading ? "Creating Account..." : "Register"}
           </button>
+          <div className="mt-4 text-center">
+            <p>
+                Already have an account?{" "}
+                <Link
+                href="/login"
+                className="text-blue-600 hover:underline"
+                >
+                Login
+                </Link>
+            </p>
+</div>
         </form>
       </div>
     </main>

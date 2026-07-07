@@ -22,6 +22,10 @@ export default function OfficerDashboard() {
   const { user } = useAuth();
   const router = useRouter();
 
+  console.log("Logged in user:", user);
+  console.log("User role:", user?.role); 
+
+  
   useEffect(() => {
     if (user && !canAccessOfficerDashboard(user.role)) {
       router.push("/dashboard");
