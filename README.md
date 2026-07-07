@@ -560,7 +560,6 @@ Crowdsourced-Civic-Issue-Reporting-and-Resolution-System/
 
 ---
 
-# 🔥 Firebase Setup
 
 ## 🔥 Firebase Setup
 
