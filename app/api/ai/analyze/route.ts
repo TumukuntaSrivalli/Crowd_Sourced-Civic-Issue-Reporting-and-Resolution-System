@@ -1,11 +1,21 @@
 import OpenAI from "openai";
 import { NextResponse } from "next/server";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY!,
-});
+const openai = process.env.OPENAI_API_KEY
+  ? new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    })
+  : null;
 
 export async function POST(req: Request) {
+    if (!openai) {
+    return Response.json({
+      category: "Unknown",
+      severity: "Low",
+      confidence: 0,
+      summary: "AI service unavailable",
+    });
+  }
   try {
     const { title, description, imageUrl } = await req.json();
 
