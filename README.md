@@ -221,6 +221,7 @@ Admin can view:
 ---
 
 ### Complaint Workflow
+```
 Citizen
    │
    ▼
@@ -253,7 +254,7 @@ Status Update
    │
    ▼
 Citizen Tracks Progress
-
+```
 ---
 
 # 👮 Officer Module
@@ -320,6 +321,7 @@ Resolution
 ---
 
 # 🏗️ System Architecture
+```
 
                            ┌────────────────────────────┐
                            │         Citizen            │
@@ -394,7 +396,6 @@ Resolution
                  Admin / Officer / Citizen
 ```
 ---
-```
 
 # 🛠️ Technology Stack
 
@@ -564,7 +565,7 @@ Crowdsourced-Civic-Issue-Reporting-and-Resolution-System/
 
 
 ## 🔥 Firebase Setup
-
+```
 1. Create a Firebase Project
 
 2. Enable Firebase Services
