@@ -755,6 +755,73 @@ recommendedOfficer
 isDuplicate
 
 ```
+# 🚀 Deployment
+
+The application is deployed using **Vercel**.
+
+### Live Demo
+
+🔗 crowd-sourced-civic-issue-reporting-and-resolution-4v2dj9y7r.vercel.app
+
+
+---
+
+## Deploy on Vercel
+
+### 1. Push the project to GitHub
+
+```bash
+git add .
+git commit -m "Deploy latest changes"
+git push origin main
+```
+
+### 2. Import the repository into Vercel
+
+1. Visit https://vercel.com
+2. Sign in with your GitHub account.
+3. Click **Add New Project**.
+4. Import your GitHub repository.
+5. Configure the environment variables.
+6. Click **Deploy**.
+
+---
+
+## Environment Variables
+
+Create a `.env.local` file and add your Firebase and Cloudinary credentials.
+
+```env
+NEXT_PUBLIC_FIREBASE_API_KEY=xxxxxxxxxxxxxxxx
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=xxxxxxxxxxxxxxxx
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=xxxxxxxxxxxxxxxx
+NEXT_PUBLIC_FIREBASE_APP_ID=xxxxxxxxxxxxxxxx
+
+NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=xxxxxxxxxxxxxxxx
+NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET=xxxxxxxxxxxxxxxx
+```
+
+> In Vercel, add the same variables under **Project Settings → Environment Variables** before deploying.
+
+---
+
+## Automatic Deployment
+
+After the initial deployment:
+
+- Every push to the **main** branch automatically triggers a new deployment.
+- Vercel builds and publishes the latest version of the application.
+- No manual deployment is required after each update.
+
+---
+
+## Deployment Status
+
+Platform: **Vercel**
+
+Repository: **GitHub**
+
+Deployment Type: **Continuous Deployment (CI/CD)**
 
 ---
 
