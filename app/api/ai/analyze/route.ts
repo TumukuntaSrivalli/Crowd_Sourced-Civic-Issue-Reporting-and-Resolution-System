@@ -1,22 +1,26 @@
-import OpenAI from "openai";
 import { NextResponse } from "next/server";
-
-const openai = process.env.OPENAI_API_KEY
-  ? new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
-    })
-  : null;
+import OpenAI from "openai";
 
 export async function POST(req: Request) {
-    if (!openai) {
-    return Response.json({
-      category: "Unknown",
-      severity: "Low",
-      confidence: 0,
-      summary: "AI service unavailable",
-    });
-  }
   try {
+    const apiKey = process.env.OPENAI_API_KEY;
+
+    // If API key is not available
+    if (!apiKey) {
+      return NextResponse.json({
+        category: "Unknown",
+        severity: "Low",
+        confidence: 0,
+        summary: "AI service unavailable",
+        isDuplicate: false,
+      });
+    }
+
+    // Create OpenAI client only when API is called
+    const openai = new OpenAI({
+      apiKey,
+    });
+
     const { title, description, imageUrl } = await req.json();
 
     const messages: any[] = [
@@ -36,7 +40,8 @@ Analyze this civic complaint:
 Title: ${title}
 Description: ${description}
 
-Return:
+Return JSON only:
+
 {
   "category": "Pothole | Garbage | Water Leakage | Streetlight | Drainage | Other",
   "severity": "Low | Medium | High",
@@ -44,13 +49,13 @@ Return:
   "summary": "short explanation",
   "isDuplicate": false
 }
-            `,
+`,
           },
         ],
       },
     ];
 
-    // 🖼️ If image exists, add vision input
+    // Add image analysis if image exists
     if (imageUrl) {
       messages[1].content.push({
         type: "image_url",
@@ -68,12 +73,24 @@ Return:
 
     const content = response.choices[0].message.content;
 
-    return NextResponse.json(JSON.parse(content || "{}"));
-  } catch (error) {
-    console.error(error);
     return NextResponse.json(
-      { error: "AI vision failed" },
-      { status: 500 }
+      JSON.parse(content || "{}")
+    );
+
+  } catch (error) {
+    console.error("AI Error:", error);
+
+    return NextResponse.json(
+      {
+        category: "Unknown",
+        severity: "Low",
+        confidence: 0,
+        summary: "AI analysis failed",
+        isDuplicate: false,
+      },
+      {
+        status: 500,
+      }
     );
   }
 }
