@@ -379,72 +379,150 @@ Cloudinary
 
 # 📂 Project Structure
 
-
-```
-Crowdsourced Civic Issue Reporting System
-
+Crowdsourced-Civic-Issue-Reporting-and-Resolution-System/
 │
-├── frontend
-│
-│   ├── app
-│   │   ├── login
-│   │   ├── register
-│   │   ├── dashboard
-│   │   ├── complaints
-│   │   ├── admin
-│   │   └── officer
-│   │
-│   ├── components
-│   │   ├── complaint
-│   │   ├── map
-│   │   └── Navbar
-│   │
-│   ├── services
-│   │   ├── complaintService.ts
-│   │   ├── authService.ts
-│   │   └── cloudinaryService.ts
-│   │
-│   ├── firebase
-│   │
-│   ├── context
-│   │
-│   ├── types
-│   │
-│   └── utils
-│
-└── README.md
-
+└── frontend/
+    │
+    ├── app/
+    │   │
+    │   ├── admin/
+    │   │   ├── dashboard/
+    │   │   │   └── page.tsx
+    │   │   │
+    │   │   ├── AnalyticsCards.tsx
+    │   │   ├── CategoryChart.tsx
+    │   │   ├── MonthlyChart.tsx
+    │   │   ├── OfficerChart.tsx
+    │   │   └── StatusChart.tsx
+    │   │
+    │   ├── complaints/
+    │   │   ├── new/
+    │   │   │   └── page.tsx
+    │   │   │
+    │   │   ├── [id]/
+    │   │   │   ├── page.tsx
+    │   │   │   └── edit/
+    │   │   │       └── page.tsx
+    │   │   │
+    │   │   └── page.tsx
+    │   │
+    │   ├── dashboard/
+    │   │   └── page.tsx
+    │   │
+    │   ├── login/
+    │   │   └── page.tsx
+    │   │
+    │   ├── officer/
+    │   │   └── dashboard/
+    │   │       └── page.tsx
+    │   │
+    │   ├── register/
+    │   │   └── page.tsx
+    │   │
+    │   ├── favicon.ico
+    │   ├── globals.css
+    │   ├── layout.tsx
+    │   └── page.tsx
+    │
+    ├── components/
+    │   │
+    │   ├── complaint/
+    │   │   ├── ComplaintCard.tsx
+    │   │   ├── ComplaintForm.tsx
+    │   │   ├── ComplaintList.tsx
+    │   │   ├── ComplaintStatusBadge.tsx
+    │   │   └── LocationPicker.tsx
+    │   │
+    │   ├── Footer.tsx
+    │   ├── Navbar.tsx
+    │   ├── ProtectedRoute.tsx
+    │   └── SignOutButton.tsx
+    │
+    ├── constants/
+    │   ├── departments.ts
+    │   └── officers.ts
+    │
+    ├── context/
+    │   └── AuthContext.tsx
+    │
+    ├── firebase/
+    │   ├── auth.ts
+    │   ├── firebaseConfig.ts
+    │   └── firestore.ts
+    │
+    ├── hooks/
+    │
+    ├── lib/
+    │
+    ├── middleware/
+    │
+    ├── public/
+    │
+    ├── services/
+    │   ├── aiService.ts
+    │   ├── analyticsService.ts
+    │   ├── authService.ts
+    │   ├── cloudinaryService.ts
+    │   ├── complaintService.ts
+    │   ├── notificationService.ts
+    │   ├── uploadService.ts
+    │   └── userService.ts
+    │
+    ├── styles/
+    │
+    ├── types/
+    │   ├── complaint.ts
+    │   ├── notification.ts
+    │   └── user.ts
+    │
+    ├── utils/
+    │   ├── complaintValidation.ts
+    │   ├── roleGuard.ts
+    │   └── helper.ts
+    │
+    ├── node_modules/                 # Installed packages (auto-generated)
+    │
+    ├── .env.local
+    ├── .gitignore
+    ├── AGENTS.md
+    ├── CLAUDE.md
+    ├── eslint.config.mjs
+    ├── next-env.d.ts
+    ├── next.config.ts
+    ├── package.json
+    ├── package-lock.json
+    ├── postcss.config.mjs
+    ├── README.md
+    └── tsconfig.json
 ```
 
 ---
 
 # 🔥 Firebase Setup
 
-Create Firebase project:
+## 🔥 Firebase Setup
 
-Enable:
+1. Create a Firebase Project
 
-```
-Authentication
-    |
-    └── Email/Password
+2. Enable Firebase Services
+   ├── Authentication
+   │     └── Email/Password
+   ├── Firestore Database
+   └── Storage (Optional)
 
-Firestore Database
+3. Create Firestore Collections
+   ├── users
+   ├── complaints
+   ├── notifications
+   ├── feedback
+   ├── departments
+   ├── officers
+   ├── analytics
+   └── ai_predictions
 
-Storage (Optional)
+4. Register the Web App
 
-```
-
-Create collections:
-
-```
-users
-
-complaints
-
-notifications
-
-feedback
+5. Connect Firebase to the Next.js Application
 
 ```
 
@@ -622,7 +700,6 @@ isDuplicate
 ## Advanced AI
 
 - Image-based issue detection
-- Voice complaint processing
 - Predictive complaint analysis
 
 
