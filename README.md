@@ -392,7 +392,9 @@ Resolution
                              │
                              ▼
                  Admin / Officer / Citizen
-
+```
+---
+```
 
 # 🛠️ Technology Stack
 
@@ -437,7 +439,7 @@ Resolution
 ---
 
 # 📂 Project Structure
-
+```
 Crowdsourced-Civic-Issue-Reporting-and-Resolution-System/
 │
 └── frontend/
@@ -557,7 +559,7 @@ Crowdsourced-Civic-Issue-Reporting-and-Resolution-System/
     ├── postcss.config.mjs
     ├── README.md
     └── tsconfig.json
-
+```
 ---
 
 
@@ -588,7 +590,7 @@ Crowdsourced-Civic-Issue-Reporting-and-Resolution-System/
 ```
 
 ---
-
+```
 # ☁️ Cloudinary Setup
 
 Used for storing complaint images.
