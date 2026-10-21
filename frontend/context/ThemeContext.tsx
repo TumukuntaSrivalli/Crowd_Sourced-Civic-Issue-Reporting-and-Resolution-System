@@ -18,10 +18,36 @@ const ThemeContext = createContext<ThemeContextType>({
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<Theme>("dark");
-  const [mounted, setMounted] = useState(false);
+
+  const applyTheme = (t: Theme) => {
+    if (typeof document === "undefined") return;
+    const root = document.documentElement;
+    const body = document.body;
+
+    if (t === "dark") {
+      root.classList.add("dark");
+      root.classList.remove("light");
+      root.setAttribute("data-theme", "dark");
+      root.style.colorScheme = "dark";
+      if (body) {
+        body.classList.add("dark");
+        body.classList.remove("light");
+        body.setAttribute("data-theme", "dark");
+      }
+    } else {
+      root.classList.add("light");
+      root.classList.remove("dark");
+      root.setAttribute("data-theme", "light");
+      root.style.colorScheme = "light";
+      if (body) {
+        body.classList.add("light");
+        body.classList.remove("dark");
+        body.setAttribute("data-theme", "light");
+      }
+    }
+  };
 
   useEffect(() => {
-    // Check saved preference or system preference
     const saved = localStorage.getItem("civic_theme") as Theme | null;
     if (saved === "light" || saved === "dark") {
       setThemeState(saved);
@@ -32,25 +58,13 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       setThemeState(initial);
       applyTheme(initial);
     }
-    setMounted(true);
   }, []);
-
-  const applyTheme = (t: Theme) => {
-    const root = document.documentElement;
-    if (t === "dark") {
-      root.classList.add("dark");
-      root.classList.remove("light");
-      root.setAttribute("data-theme", "dark");
-    } else {
-      root.classList.add("light");
-      root.classList.remove("dark");
-      root.setAttribute("data-theme", "light");
-    }
-  };
 
   const setTheme = (newTheme: Theme) => {
     setThemeState(newTheme);
-    localStorage.setItem("civic_theme", newTheme);
+    try {
+      localStorage.setItem("civic_theme", newTheme);
+    } catch (_) {}
     applyTheme(newTheme);
   };
 
@@ -61,10 +75,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme, setTheme }}>
-      {/* Avoid flash of unstyled content */}
-      <div className={theme} style={{ display: "contents" }}>
-        {children}
-      </div>
+      {children}
     </ThemeContext.Provider>
   );
 }

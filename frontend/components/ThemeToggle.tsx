@@ -1,15 +1,29 @@
 "use client";
 
 import { useTheme } from "@/context/ThemeContext";
+import { useEffect, useState } from "react";
 
 export default function ThemeToggle() {
   const { theme, toggleTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <div className="h-10 w-10 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-100/50 dark:bg-zinc-800/50 animate-pulse" />
+    );
+  }
+
+  const isDark = theme === "dark";
 
   return (
     <button
       onClick={toggleTheme}
       type="button"
-      title={`Switch to ${theme === "dark" ? "Light" : "Dark"} mode`}
+      title={`Switch to ${isDark ? "Light" : "Dark"} mode`}
       aria-label="Toggle theme"
       className="
         relative
@@ -22,8 +36,8 @@ export default function ThemeToggle() {
         border
         border-zinc-300
         dark:border-zinc-700
-        bg-zinc-100/80
-        dark:bg-zinc-800/80
+        bg-zinc-100/90
+        dark:bg-zinc-800/90
         text-zinc-700
         dark:text-zinc-200
         hover:bg-zinc-200
@@ -33,9 +47,10 @@ export default function ThemeToggle() {
         transition-all
         duration-200
         shadow-sm
+        cursor-pointer
       "
     >
-      {theme === "dark" ? (
+      {isDark ? (
         // Sun icon for dark mode (click to switch to light)
         <svg
           className="w-5 h-5 text-amber-400 transition-transform rotate-0"
