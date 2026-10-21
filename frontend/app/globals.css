@@ -36,6 +36,86 @@ html, body {
   min-height: 100%;
 }
 
+/* Guaranteed Dark Theme overrides for elements and utility classes */
+html.dark, html[data-theme="dark"],
+body.dark, body[data-theme="dark"] {
+  background-color: #07090e !important;
+  color: #f8fafc !important;
+}
+
+html.dark body, html[data-theme="dark"] body {
+  background-color: #07090e !important;
+  color: #f8fafc !important;
+}
+
+html.dark main, html[data-theme="dark"] main,
+.dark main, [data-theme="dark"] main {
+  background-color: #07090e !important;
+  color: #f8fafc !important;
+}
+
+html.dark header, html[data-theme="dark"] header,
+.dark header, [data-theme="dark"] header {
+  background-color: rgba(7, 9, 14, 0.88) !important;
+  border-color: #1e293b !important;
+}
+
+html.dark .bg-white, html[data-theme="dark"] .bg-white,
+.dark .bg-white, [data-theme="dark"] .bg-white {
+  background-color: #0f172a !important;
+}
+
+html.dark .bg-slate-50, html[data-theme="dark"] .bg-slate-50,
+.dark .bg-slate-50, [data-theme="dark"] .bg-slate-50 {
+  background-color: #07090e !important;
+}
+
+html.dark .bg-slate-100, html[data-theme="dark"] .bg-slate-100,
+.dark .bg-slate-100, [data-theme="dark"] .bg-slate-100 {
+  background-color: #1e293b !important;
+}
+
+html.dark .text-slate-900, html[data-theme="dark"] .text-slate-900,
+.dark .text-slate-900, [data-theme="dark"] .text-slate-900 {
+  color: #f8fafc !important;
+}
+
+html.dark .text-slate-800, html[data-theme="dark"] .text-slate-800,
+.dark .text-slate-800, [data-theme="dark"] .text-slate-800 {
+  color: #f1f5f9 !important;
+}
+
+html.dark .text-slate-700, html[data-theme="dark"] .text-slate-700,
+.dark .text-slate-700, [data-theme="dark"] .text-slate-700 {
+  color: #e2e8f0 !important;
+}
+
+html.dark .text-slate-600, html[data-theme="dark"] .text-slate-600,
+.dark .text-slate-600, [data-theme="dark"] .text-slate-600 {
+  color: #94a3b8 !important;
+}
+
+html.dark .text-slate-500, html[data-theme="dark"] .text-slate-500,
+.dark .text-slate-500, [data-theme="dark"] .text-slate-500 {
+  color: #64748b !important;
+}
+
+html.dark .border-slate-200, html[data-theme="dark"] .border-slate-200,
+.dark .border-slate-200, [data-theme="dark"] .border-slate-200 {
+  border-color: #1e293b !important;
+}
+
+html.dark input, html[data-theme="dark"] input,
+html.dark textarea, html[data-theme="dark"] textarea,
+html.dark select, html[data-theme="dark"] select,
+.dark input, [data-theme="dark"] input,
+.dark textarea, [data-theme="dark"] textarea,
+.dark select, [data-theme="dark"] select {
+  background-color: #0b0f19 !important;
+  border-color: #24324d !important;
+  color: #f8fafc !important;
+}
+
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
