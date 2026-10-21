@@ -53,11 +53,17 @@ export default function ComplaintForm({
       setSubmitting(true);
       let uploadedUrl = complaint?.imageUrl || "";
 
-      // 1. Upload photo to Cloudinary if selected
+      // 1. Upload photo if selected
       if (image) {
         setSubmitStep("Uploading image evidence...");
-        const res = await uploadImage(image);
-        uploadedUrl = res.url;
+        try {
+          const res = await uploadImage(image);
+          if (res?.url) {
+            uploadedUrl = res.url;
+          }
+        } catch (uploadErr) {
+          console.warn("Image upload failed, continuing with complaint creation:", uploadErr);
+        }
       }
 
       // 2. AI Triage
@@ -115,31 +121,34 @@ export default function ComplaintForm({
           priorityScore: aiData.priorityScore || (severity === "High" ? 85 : severity === "Medium" ? 60 : 35),
         });
 
-        // 3. Optional: Ping backend Power BI sync endpoint
-        try {
-          fetch("http://localhost:5000/api/v1/complaints/sync", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              id: newDocId,
-              title,
-              description,
-              category: aiData.category || category,
-              severity: aiData.severity || severity,
-              status: "Pending",
-              department: aiData.department || "Public Works",
-              location: { latitude, longitude, area: "Municipal Ward" },
-              priorityScore: aiData.priorityScore || 70,
-            }),
-          }).catch(() => {});
-        } catch (_) {}
+        // 3. Optional: Sync with backend API if deployed and configured
+        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL;
+        if (backendUrl && backendUrl.startsWith("https://")) {
+          try {
+            fetch(`${backendUrl}/api/v1/complaints/sync`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                id: newDocId,
+                title,
+                description,
+                category: aiData.category || category,
+                severity: aiData.severity || severity,
+                status: "Pending",
+                department: aiData.department || "Public Works",
+                location: { latitude, longitude, area: "Municipal Ward" },
+                priorityScore: aiData.priorityScore || 70,
+              }),
+            }).catch(() => {});
+          } catch (_) {}
+        }
 
         alert("Complaint submitted successfully! Municipal officers have been notified.");
         router.push("/complaints");
       }
     } catch (error: any) {
       console.error("Submission error:", error);
-      alert(error.message || "Failed to submit complaint. Please try again.");
+      alert(error.message || "Failed to submit complaint. Please check your network connection and try again.");
     } finally {
       setSubmitting(false);
       setSubmitStep("");

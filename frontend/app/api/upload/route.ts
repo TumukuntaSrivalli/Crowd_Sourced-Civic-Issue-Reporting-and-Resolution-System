@@ -7,7 +7,7 @@ export async function POST(req: Request) {
 
     if (!file) {
       return NextResponse.json(
-        { error: "No file provided" },
+        { error: "No file provided", url: "" },
         { status: 400 }
       );
     }
@@ -15,27 +15,41 @@ export async function POST(req: Request) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
-
+    const cloudName = (process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "ordpnpis").trim();
     const uploadUrl = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
 
-    const form = new FormData();
-    form.append("file", new Blob([buffer]));
-    form.append("upload_preset", "civic_upload"); // create in Cloudinary
+    try {
+      const form = new FormData();
+      form.append("file", new Blob([buffer], { type: file.type || "image/jpeg" }));
+      form.append("upload_preset", "civic_upload");
 
-    const res = await fetch(uploadUrl, {
-      method: "POST",
-      body: form,
-    });
+      const res = await fetch(uploadUrl, {
+        method: "POST",
+        body: form,
+      });
 
-    const data = await res.json();
+      if (res.ok) {
+        const data = await res.json();
+        if (data.secure_url) {
+          return NextResponse.json({ url: data.secure_url });
+        }
+      }
+      console.warn("Cloudinary responded with status:", res.status);
+    } catch (cloudErr) {
+      console.warn("Server-side Cloudinary upload error:", cloudErr);
+    }
 
-    return NextResponse.json({ url: data.secure_url });
+    // Fallback: If image is under 400KB, convert to base64 Data URL so it is preserved in Firestore
+    if (buffer.length < 400 * 1024) {
+      const base64 = buffer.toString("base64");
+      const mimeType = file.type || "image/jpeg";
+      return NextResponse.json({ url: `data:${mimeType};base64,${base64}` });
+    }
+
+    // Graceful fallback: return empty url rather than failing the whole complaint submission
+    return NextResponse.json({ url: "" });
   } catch (error) {
-    console.error(error);
-    return NextResponse.json(
-      { error: "Upload failed" },
-      { status: 500 }
-    );
+    console.error("Upload route general error:", error);
+    return NextResponse.json({ url: "" });
   }
 }
