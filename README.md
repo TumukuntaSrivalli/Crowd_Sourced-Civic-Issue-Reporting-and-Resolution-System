@@ -20,7 +20,6 @@
 - [🌓 Dual Mode UI: Light & Dark](#-dual-mode-ui-light--dark)
 - [📁 Project Folder Structure](#-project-folder-structure)
 - [🚀 Quick Start & Local Setup](#-quick-start--local-setup)
-- [🌐 Deployment on Render](#-deployment-on-render)
 - [📡 API Reference](#-api-reference)
 - [🛡️ Security & Role Guards](#️-security--role-guards)
 - [👥 Contributing & License](#-contributing--license)
@@ -234,27 +233,6 @@ Fill in your Firebase, OpenAI, and Cloudinary keys in `.env.local`, then launch 
 npm run dev
 ```
 Open [http://localhost:3000](http://localhost:3000) in your browser.
-
----
-
-## 🌐 Deployment on Render
-
-This repository includes a ready-to-use [`render.yaml`](./render.yaml) blueprint specification for 1-click deployment on [Render](https://render.com).
-
-### Deployment Steps:
-1. Push your repository to GitHub.
-2. Log into your **Render Dashboard** ([dashboard.render.com](https://dashboard.render.com)).
-3. Click **New +** ➔ **Blueprint**.
-4. Select your GitHub repository: `Crowd_Sourced-Civic-Issue-Reporting-and-Resolution-System`.
-5. Render will automatically parse `render.yaml` and provision both:
-   - **`civic-issue-backend`**: Web service running Express with Firebase Admin SDK.
-   - **`civic-issue-frontend`**: Web service running Next.js.
-6. Populate the environment variables in the Render dashboard:
-   - `OPENAI_API_KEY`
-   - `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME`
-   - `CLOUDINARY_API_KEY` & `CLOUDINARY_API_SECRET`
-   - `NEXT_PUBLIC_FIREBASE_*` credentials
-7. Click **Apply**. Render will build and deploy both services with automatic HTTPS!
 
 ---
 
