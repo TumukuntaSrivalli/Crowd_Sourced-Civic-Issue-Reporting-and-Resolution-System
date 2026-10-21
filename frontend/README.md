@@ -2,7 +2,7 @@
 
 This folder contains the **Next.js 16** front-end application for the Crowdsourced Civic Issue Reporting and Resolution System.
 
-For the full project documentation, backend Power BI analytics, and deployment instructions, refer to the root [README.md](../README.md).
+For the full project documentation, Firebase backend setup, and Render deployment instructions, refer to the root [README.md](../README.md).
 
 ---
 

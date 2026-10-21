@@ -2,13 +2,13 @@
 
 [![Next.js 16](https://img.shields.io/badge/Next.js-16.2-blue?logo=next.js)](https://nextjs.org/)
 [![React 19](https://img.shields.io/badge/React-19.2-cyan?logo=react)](https://react.dev/)
-[![Node.js Backend](https://img.shields.io/badge/Backend-Node%20Express-green?logo=node.js)](https://nodejs.org/)
-[![Power BI](https://img.shields.io/badge/Analytics-Microsoft%20Power%20BI-F2C811?logo=powerbi&logoColor=black)](https://powerbi.microsoft.com/)
+[![Firebase Backend](https://img.shields.io/badge/Backend-Firebase%20Cloud%20Firestore-orange?logo=firebase)](https://firebase.google.com/)
+[![Node.js Express](https://img.shields.io/badge/API-Node%20Express-green?logo=node.js)](https://nodejs.org/)
 [![Render Deploy](https://img.shields.io/badge/Deploy-Render%20Blueprint-46E3B7?logo=render)](https://render.com/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS%20v4-38B2AC?logo=tailwindcss)](https://tailwindcss.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-> **CivicSense** is an enterprise-grade, crowdsourced civic issue reporting, automated triage, and municipal resolution platform. It bridges citizens and local government authorities through real-time geo-tracking, OpenAI-powered hazard classification, dual Light/Dark mode UI, and **Microsoft Power BI** backend analytics.
+> **CivicSense** is an intelligent, crowdsourced civic issue reporting, automated triage, and municipal resolution platform. It bridges citizens and local government authorities through real-time geo-tracking, OpenAI-powered hazard classification, dual Light/Dark mode UI, and a real-time **Firebase Cloud Firestore** backend.
 
 ---
 
@@ -16,13 +16,13 @@
 
 - [🏛️ System Architecture](#️-system-architecture)
 - [✨ Key Features](#-key-features)
-- [📊 Power BI Backend & Municipal Analytics](#-power-bi-backend--municipal-analytics)
+- [🔥 Firebase Backend & Cloud Architecture](#-firebase-backend--cloud-architecture)
 - [🌓 Dual Mode UI: Light & Dark](#-dual-mode-ui-light--dark)
 - [📁 Project Folder Structure](#-project-folder-structure)
 - [🚀 Quick Start & Local Setup](#-quick-start--local-setup)
 - [🌐 Deployment on Render](#-deployment-on-render)
 - [📡 API Reference](#-api-reference)
-- [🛡️ Security & Privacy](#️-security--privacy)
+- [🛡️ Security & Role Guards](#️-security--role-guards)
 - [👥 Contributing & License](#-contributing--license)
 
 ---
@@ -41,19 +41,18 @@
            ┌────────────────────────────┼────────────────────────────┐
            ▼                            ▼                            ▼
 ┌────────────────────┐       ┌────────────────────┐       ┌────────────────────┐
-│   Firebase Auth &  │       │  OpenAI Vision AI  │       │   Civic Backend    │
-│  Firestore DB      │       │  Triage & Priority │       │   Express Service  │
-│  Realtime Storage  │       │  Duplicate Filter  │       │   Port 5000 / 10000│
-└────────────────────┘       └────────────────────┘       └─────────┬──────────┘
-                                                                    │
-                                                     REST / Push Dataset / CSV
-                                                                    │
-                                                                    ▼
-                                                  ┌──────────────────────────────────┐
-                                                  │       Microsoft Power BI         │
-                                                  │   Executive Municipal Dashboards │
-                                                  │    SLA Gauges • Geo Heatmaps     │
-                                                  └──────────────────────────────────┘
+│   Firebase Auth    │       │  OpenAI Vision AI  │       │   Civic Backend    │
+│  User Roles & JWT  │       │  Triage & Priority │       │   Express Service  │
+│  State Management  │       │  Duplicate Filter  │       │   Admin SDK Port   │
+└──────────┬─────────┘       └────────────────────┘       └─────────┬──────────┘
+           │                                                        │
+           └────────────────────────────┬───────────────────────────┘
+                                        ▼
+                        ┌────────────────────────────────┐
+                        │     Firebase Cloud Firestore   │
+                        │   Collections: complaints,     │
+                        │   users, notifications         │
+                        └────────────────────────────────┘
 ```
 
 ---
@@ -62,9 +61,9 @@
 
 ### 👤 1. Citizen Experience
 - **1-Click Issue Filing**: Upload photographic evidence, describe the problem, and auto-detect GPS location.
-- **AI Automated Triage**: OpenAI model automatically inspects submissions to determine category, hazard severity, and AI confidence score.
-- **Duplicate Detection**: AI flags redundant submissions across the same vicinity to avoid municipal clutter.
-- **Real-Time Tracking**: Monitor status transitions (`Pending` ➔ `Assigned` ➔ `In Progress` ➔ `Resolved`).
+- **AI Automated Triage**: OpenAI inspects submissions to automatically evaluate category, hazard severity, and confidence score.
+- **Duplicate Detection**: AI flags redundant submissions across the same vicinity to reduce municipal backlog.
+- **Real-Time Tracking**: Monitor status transitions in real time (`Pending` ➔ `Assigned` ➔ `In Progress` ➔ `Resolved`).
 
 ### 👮 2. Field Officer Portal
 - **Direct Dispatch Queue**: View issues assigned directly to the officer's department (Roads, Sanitation, Electrical, Water).
@@ -73,48 +72,78 @@
 
 ### 🏛️ 3. Municipal Admin Command Center
 - **Live OpenStreetMap Cluster**: Visualize complaints across city wards on an interactive Leaflet map.
-- **Officer Assignment**: Seamlessly assign unassigned complaints to municipal personnel.
+- **Officer Assignment**: Seamlessly assign unassigned complaints to municipal personnel with automatic notifications.
 - **Search & Multi-Filter**: Filter by category, status, severity, and search keywords.
 
 ---
 
-## 📊 Power BI Backend & Municipal Analytics
+## 🔥 Firebase Backend & Cloud Architecture
 
-The backend contains a dedicated **Microsoft Power BI Analytics Pipeline** enabling city councils and municipal commissioners to visualize civic trends, track SLA compliance, and monitor department performance.
+The backend is built around **Firebase Cloud Firestore** and **Firebase Authentication**:
 
-### 🔗 Integration Methods
+### 📦 Firestore Data Schema
 
-1. **Power BI Web Feed (REST API)**:
-   - Endpoint: `GET /api/v1/powerbi/complaints`
-   - Returns clean, normalized JSON records tailored for Power BI Web Data Connector and DirectQuery.
-2. **Instant 1-Click CSV Stream**:
-   - Endpoint: `GET /api/v1/powerbi/export/csv`
-   - Ingest into Power BI Desktop via `Get Data` ➔ `Web` ➔ Paste URL. Supports automated scheduled refreshes.
-3. **Real-Time Streaming Push Dataset**:
-   - Webhook: `POST /api/v1/powerbi/push-dataset`
-   - Feeds live tiles on Power BI Service dashboards as complaints are registered.
+#### 1. `complaints` Collection
+```typescript
+interface Complaint {
+  id: string;
+  title: string;
+  description: string;
+  category: "Road Damage" | "Garbage" | "Streetlight" | "Water Leakage" | "Drainage" | "Traffic Signal" | "Other";
+  severity: "Low" | "Medium" | "High";
+  status: "Pending" | "Assigned" | "In Progress" | "Resolved" | "Rejected";
+  imageUrl?: string;
+  userId: string;
+  assignedTo?: string;
+  department?: string;
+  priorityScore?: number;
+  isDuplicate?: boolean;
+  location: {
+    latitude: number;
+    longitude: number;
+    area?: string;
+  };
+  aiCategory?: string;
+  aiSeverity?: string;
+  aiConfidence?: number;
+  aiSummary?: string;
+  createdAt: any;
+  updatedAt?: any;
+}
+```
 
-### 📐 Pre-Calculated DAX Measures
+#### 2. `users` Collection
+```typescript
+interface UserProfile {
+  uid: string;
+  fullName: string;
+  email: string;
+  role: "citizen" | "officer" | "admin";
+  department?: string;
+  createdAt?: any;
+}
+```
 
-The project includes pre-built production DAX measures located in [`backend/powerbi/PowerBI_Measures_and_DAX.dax`](./backend/powerbi/PowerBI_Measures_and_DAX.dax):
+#### 3. `notifications` Collection
+```typescript
+interface Notification {
+  id: string;
+  userId: string; // Target officer or citizen
+  complaintId: string;
+  message: string;
+  read: boolean;
+  createdAt: any;
+}
+```
 
-| DAX Measure | Description |
-|---|---|
-| `[Total Complaints]` | Aggregate count of all filed complaints |
-| `[Resolution Rate %]` | `DIVIDE([Total Resolved], [Total Complaints], 0) * 100` |
-| `[Active Backlog]` | Count of unresolved issues (`Pending + Assigned + In Progress`) |
-| `[High Severity Share %]` | Percentage of complaints posing immediate public hazard |
-| `[Average Resolution Hours]` | Mean time taken from filing to resolution |
-| `[SLA Compliance Rate %]` | Complaints resolved within the municipal 48-hour SLA window |
-| `[Civic Hazard Index]` | Weighted priority index based on severity and score |
-
-For step-by-step setup instructions, refer to the [Power BI Integration Guide](./backend/powerbi/POWERBI_INTEGRATION_GUIDE.md).
+### ⚡ Firebase Admin SDK Backend
+The `backend/server.js` service leverages `firebase-admin` to provide verified server-side endpoints, aggregate analytics across wards, and manage officer dispatch with high concurrency.
 
 ---
 
 ## 🌓 Dual Mode UI: Light & Dark
 
-CivicSense provides an adaptive theme engine:
+CivicSense includes a responsive theme engine:
 - **Dark Mode**: High-contrast, sleek slate aesthetics (`#07090e`), glowing status accents, and glassmorphism.
 - **Light Mode**: Crisp, high-readability civic design with clean borders, vibrant badges, and subtle drop shadows.
 - **Instant Toggle**: Click the Sun/Moon toggle in the navigation bar. Preference persists in `localStorage` across sessions.
@@ -125,20 +154,16 @@ CivicSense provides an adaptive theme engine:
 
 ```
 Crowdsourced-Civic-Issue-Reporting-and-Resolution-System/
-├── backend/                              # Express REST API & Power BI Hub
-│   ├── powerbi/                          # Power BI Assets & Connectors
-│   │   ├── Civic_Issue_Analytics_Schema.json  # Push dataset schema
-│   │   ├── PowerBI_Measures_and_DAX.dax       # 15+ production DAX formulas
-│   │   ├── powerbi_sync_service.js            # Live streaming sync script
-│   │   └── POWERBI_INTEGRATION_GUIDE.md       # Integration instructions
+├── backend/                              # Express REST API & Firebase Admin Hub
+│   ├── firebaseAdmin.js                  # Firebase Admin SDK initialization
 │   ├── server.js                         # High-performance Express API
 │   ├── package.json                      # Backend dependencies
 │   └── .env.example                      # Backend environment template
 │
 ├── frontend/                             # Next.js 16 Web Application
-│   ├── app/                              # Next.js App Router
+│   ├── app/                              # Next.js App Router (14 verified routes)
 │   │   ├── admin/                        # Admin dashboard & analytics
-│   │   │   ├── analytics/page.tsx        # Power BI Hub page
+│   │   │   ├── analytics/page.tsx        # Firebase Live Analytics hub
 │   │   │   └── dashboard/page.tsx        # Command center & map
 │   │   ├── api/                          # Serverless routes (AI, Cloudinary)
 │   │   ├── complaints/                   # Citizen complaint views
@@ -157,9 +182,13 @@ Crowdsourced-Civic-Issue-Reporting-and-Resolution-System/
 │   │   ├── Navbar.tsx                    # Header with role links & theme switch
 │   │   └── ThemeToggle.tsx               # Sun/Moon mode switcher
 │   ├── context/                          # React context providers
-│   │   ├── AuthContext.tsx               # Firebase auth state
+│   │   ├── AuthContext.tsx               # Firebase auth state & user role
 │   │   └── ThemeContext.tsx              # Light / Dark mode state
-│   ├── services/                         # Firebase & REST service layers
+│   ├── firebase/                         # Firebase client SDK initialization
+│   │   ├── auth.ts                       # Auth exports
+│   │   ├── firestore.ts                  # Firestore DB exports
+│   │   └── firebaseConfig.ts             # Client configuration
+│   ├── services/                         # Firestore CRUD & AI service layers
 │   ├── package.json                      # Frontend dependencies
 │   └── .env.example                      # Frontend environment template
 │
@@ -174,7 +203,7 @@ Crowdsourced-Civic-Issue-Reporting-and-Resolution-System/
 
 ### Prerequisites
 - Node.js 18+ installed
-- Firebase Project created with Firestore & Authentication enabled
+- Firebase Project created with Firestore & Authentication enabled (`civic-ai-97ef1`)
 - Cloudinary Account (for image evidence storage)
 - OpenAI API Key (optional, for automated AI triage)
 
@@ -191,7 +220,7 @@ npm install
 cp .env.example .env
 npm start
 ```
-The backend API and Power BI feeds will start on `http://localhost:5000`.
+The backend API starts on `http://localhost:5000`.
 
 ### 3. Configure Frontend
 In a new terminal window:
@@ -218,7 +247,7 @@ This repository includes a ready-to-use [`render.yaml`](./render.yaml) blueprint
 3. Click **New +** ➔ **Blueprint**.
 4. Select your GitHub repository: `Crowd_Sourced-Civic-Issue-Reporting-and-Resolution-System`.
 5. Render will automatically parse `render.yaml` and provision both:
-   - **`civic-issue-backend`**: Web service running the Express API & Power BI feeds.
+   - **`civic-issue-backend`**: Web service running Express with Firebase Admin SDK.
    - **`civic-issue-frontend`**: Web service running Next.js.
 6. Populate the environment variables in the Render dashboard:
    - `OPENAI_API_KEY`
@@ -233,21 +262,23 @@ This repository includes a ready-to-use [`render.yaml`](./render.yaml) blueprint
 
 ### Health & Status
 - `GET /` — Backend status & service information
-- `GET /health` — Liveness probe (uptime & status)
+- `GET /health` — Liveness probe (uptime & Firebase connection)
 
-### Power BI Analytics
-- `GET /api/v1/powerbi/complaints` — Formatted JSON records for Power BI Web/DirectQuery
-- `GET /api/v1/powerbi/metrics` — Aggregated KPI metrics (Total, Resolved, SLA %, Hazard Index)
-- `GET /api/v1/powerbi/export/csv` — CSV stream for 1-click Power BI Desktop import
-- `POST /api/v1/complaints/sync` — Synchronize new complaint events to the analytics stream
-- `POST /api/v1/powerbi/alert-webhook` — Inbound webhook for Power BI data-driven alert triggers
+### Complaints API
+- `GET /api/v1/complaints` — Retrieve complaints from Cloud Firestore
+- `POST /api/v1/complaints` — Create a new civic complaint
+- `PATCH /api/v1/complaints/:id/status` — Update resolution status (`Pending`, `In Progress`, `Resolved`)
+- `PATCH /api/v1/complaints/:id/assign` — Assign complaint to an officer
+
+### Analytics API
+- `GET /api/v1/analytics/stats` — Live analytics aggregated from Firestore
 
 ---
 
 ## 👥 Authors & Acknowledgments
 
 - **Lead Developer**: Tumukunta Srivalli ([@TumukuntaSrivalli](https://github.com/TumukuntaSrivalli))
-- **Technologies**: Next.js, React, Tailwind CSS, Firebase, Express, Microsoft Power BI, Leaflet, OpenAI.
+- **Technologies**: Next.js, React, Tailwind CSS, Firebase (Firestore & Auth), Express, Leaflet, OpenAI.
 
 ---
 

@@ -105,7 +105,7 @@ export default function AdminDashboard() {
               href="/admin/analytics"
               className="rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-semibold text-xs px-4 py-2.5 shadow-sm transition flex items-center gap-1.5"
             >
-              <span>📊</span> Power BI Analytics Hub
+              <span>📊</span> Municipal Analytics Hub
             </Link>
           </div>
         </div>

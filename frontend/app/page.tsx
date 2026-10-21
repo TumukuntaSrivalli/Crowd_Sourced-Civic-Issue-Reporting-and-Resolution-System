@@ -33,7 +33,7 @@ export default function Home() {
 
           {/* Subtitle */}
           <p className="mt-6 text-lg sm:text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
-            Report civic hazards in seconds with instant AI classification, precision GPS geotagging, real-time officer dispatch, and enterprise Power BI municipal analytics.
+            Report civic hazards in seconds with instant AI classification, precision GPS geotagging, real-time officer dispatch, and a robust Firebase Cloud Firestore backend.
           </p>
 
           {/* CTA Buttons */}
@@ -94,8 +94,8 @@ export default function Home() {
               <div className="mt-1 text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-400">GPS Geo-Tagged</div>
             </div>
             <div className="rounded-2xl border border-slate-200 dark:border-slate-800/80 bg-white/80 dark:bg-slate-900/60 p-6 backdrop-blur-md shadow-sm">
-              <div className="text-3xl sm:text-4xl font-extrabold text-amber-500">Power BI</div>
-              <div className="mt-1 text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-400">Real-Time Analytics</div>
+              <div className="text-3xl sm:text-4xl font-extrabold text-amber-500">Firebase</div>
+              <div className="mt-1 text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-400">Realtime Cloud DB</div>
             </div>
           </div>
         </div>
@@ -141,13 +141,11 @@ export default function Home() {
             {/* Card 3 */}
             <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/80 p-8 shadow-sm hover:border-amber-500/50 hover:shadow-md transition">
               <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-50 dark:bg-amber-950/80 border border-amber-200 dark:border-amber-800 text-amber-600 dark:text-amber-400 mb-6">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                </svg>
+                <span className="text-2xl">🔥</span>
               </div>
-              <h3 className="text-xl font-bold mb-3">Power BI Backend Analytics</h3>
+              <h3 className="text-xl font-bold mb-3">Firebase Cloud Backend</h3>
               <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-sm">
-                Real-time Power BI REST feeds, automated CSV exports, and pre-configured DAX measures deliver executive governance dashboards with zero manual work.
+                Real-time Cloud Firestore database, Firebase Authentication with role-based access control, and server-side Admin SDK verification for high reliability.
               </p>
             </div>
           </div>
@@ -188,12 +186,12 @@ export default function Home() {
       <footer className="border-t border-slate-200 dark:border-slate-800 py-10 bg-white/70 dark:bg-slate-950/70">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 dark:text-slate-400">
           <div>
-            © {new Date().getFullYear()} CivicSense Platform. Engineered for smart cities & empowered communities.
+            © {new Date().getFullYear()} CivicSense Platform. Engineered with Next.js, Firebase, and Tailwind CSS.
           </div>
           <div className="flex items-center gap-6">
             <Link href="/login" className="hover:text-slate-900 dark:hover:text-white transition">Citizen Portal</Link>
             <Link href="/admin/dashboard" className="hover:text-slate-900 dark:hover:text-white transition">Municipal Admin</Link>
-            <Link href="/admin/analytics" className="hover:text-slate-900 dark:hover:text-white transition">Power BI Feed</Link>
+            <Link href="/admin/analytics" className="hover:text-slate-900 dark:hover:text-white transition">Firebase Analytics</Link>
           </div>
         </div>
       </footer>

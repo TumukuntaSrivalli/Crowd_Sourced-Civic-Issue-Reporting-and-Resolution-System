@@ -22,10 +22,10 @@ export default function AnalyticsPage() {
   }, []);
 
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL || "http://localhost:5000";
-  const powerBiFeedUrl = `${backendUrl}/api/v1/powerbi/complaints`;
+  const apiFeedUrl = `${backendUrl}/api/v1/analytics/stats`;
 
   const copyFeedUrl = () => {
-    navigator.clipboard.writeText(powerBiFeedUrl);
+    navigator.clipboard.writeText(apiFeedUrl);
     setCopied(true);
     setTimeout(() => setCopied(false), 2500);
   };
@@ -35,7 +35,7 @@ export default function AnalyticsPage() {
       <main className="min-h-[80vh] flex items-center justify-center p-8 bg-slate-50 dark:bg-[#07090e]">
         <div className="flex flex-col items-center gap-3 text-slate-600 dark:text-slate-400">
           <div className="h-8 w-8 animate-spin rounded-full border-4 border-sky-500 border-t-transparent" />
-          <p className="font-medium text-sm">Aggregating civic analytics & Power BI feed...</p>
+          <p className="font-medium text-sm">Aggregating civic analytics from Cloud Firestore...</p>
         </div>
       </main>
     );
@@ -51,13 +51,13 @@ export default function AnalyticsPage() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <div className="inline-flex items-center gap-2 rounded-full border border-amber-300 dark:border-amber-800/80 bg-amber-50 dark:bg-amber-950/60 px-3 py-1 text-xs font-bold text-amber-700 dark:text-amber-300 mb-2">
-              <span>📊</span> Power BI Municipal Analytics Hub
+              <span>🔥</span> Firebase Cloud Firestore Analytics Hub
             </div>
             <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
               Executive Governance & SLA Dashboard
             </h1>
             <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
-              Real-time civic performance metrics, department response rates, and Power BI streaming data feeds.
+              Real-time civic resolution metrics, department response rates, and live Firebase backend synchronization.
             </p>
           </div>
 
@@ -68,45 +68,36 @@ export default function AnalyticsPage() {
             >
               ← Admin Control
             </Link>
-
-            <a
-              href={`${backendUrl}/api/v1/powerbi/export/csv`}
-              target="_blank"
-              rel="noreferrer"
-              className="rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-semibold text-xs px-4 py-2 shadow-sm transition flex items-center gap-1.5"
-            >
-              <span>📥</span> Export Power BI CSV
-            </a>
           </div>
         </div>
 
-        {/* Power BI Live Connector Banner */}
+        {/* Firebase Live Connector Banner */}
         <div className="rounded-2xl border border-amber-200 dark:border-amber-900/40 bg-gradient-to-r from-amber-50/70 via-white to-sky-50/70 dark:from-amber-950/30 dark:via-slate-900/60 dark:to-sky-950/30 p-6 shadow-xs backdrop-blur-md">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-2 text-sm font-bold text-amber-900 dark:text-amber-300">
                 <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse" />
-                Power BI Backend Data Connector Active
+                Firebase Real-Time Backend Active (Project: civic-ai-97ef1)
               </div>
               <p className="mt-1 text-xs text-slate-600 dark:text-slate-400 max-w-2xl">
-                Connect your Microsoft Power BI Desktop or Power BI Service to this live endpoint for automated scheduled refresh or real-time streaming tiles.
+                Connected to Cloud Firestore with live listeners, server-side Admin SDK verification, and real-time status synchronization.
               </p>
               <div className="mt-3 flex items-center gap-2 flex-wrap">
                 <code className="rounded-lg bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-3 py-1 font-mono text-[11px] text-slate-800 dark:text-slate-200">
-                  {powerBiFeedUrl}
+                  {apiFeedUrl}
                 </code>
                 <button
                   onClick={copyFeedUrl}
                   className="rounded-lg bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 px-3 py-1 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-700 transition"
                 >
-                  {copied ? "✅ Copied!" : "📋 Copy URL"}
+                  {copied ? "✅ Copied!" : "📋 Copy Endpoint"}
                 </button>
               </div>
             </div>
 
             <div className="flex items-center gap-3">
               <span className="rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-2 text-xs font-medium text-slate-700 dark:text-slate-300">
-                Format: <strong>REST / OData / CSV</strong>
+                Backend: <strong>Firebase Cloud Firestore</strong>
               </span>
             </div>
           </div>

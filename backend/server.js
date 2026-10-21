@@ -1,6 +1,6 @@
 /**
- * Civic Issue Reporting and Resolution System - Backend API & Power BI Analytics Hub
- * Built with Express, compression, cors, and Power BI streaming / export connectors.
+ * Civic Issue Reporting and Resolution System - Backend API Service
+ * Powered by Firebase Admin SDK, Cloud Firestore, and Express.js
  */
 
 const express = require("express");
@@ -8,6 +8,7 @@ const cors = require("cors");
 const helmet = require("helmet");
 const compression = require("compression");
 const morgan = require("morgan");
+const { admin, db } = require("./firebaseAdmin");
 require("dotenv").config();
 
 const app = express();
@@ -27,180 +28,63 @@ app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(morgan("dev"));
 
-// In-Memory Seed / Mock Data Store (Synchronized with Firebase / Power BI Pipeline)
-let complaintsDatabase = [
+// Fallback seed complaints in case Firestore is unreachable during local testing
+const fallbackComplaints = [
   {
     id: "civic-001",
     title: "Deep Pothole on Main Road near St. Marks School",
-    description: "Hazardous pothole causing severe traffic congestion and bike accidents.",
+    description: "Hazardous pothole causing traffic congestion and vehicle damage.",
     category: "Road Damage",
     severity: "High",
     status: "In Progress",
     assignedTo: "Officer Rajesh Kumar",
     department: "Roads & Infrastructure",
-    location: { latitude: 17.385044, longitude: 78.486671, area: "Banjara Hills" },
+    location: { latitude: 17.385044, longitude: 78.486671 },
     isDuplicate: false,
     priorityScore: 92,
-    createdAt: new Date(Date.now() - 36 * 3600 * 1000).toISOString(),
-    updatedAt: new Date(Date.now() - 6 * 3600 * 1000).toISOString(),
-    resolutionHours: null,
+    createdAt: new Date().toISOString(),
   },
   {
     id: "civic-002",
     title: "Overflowing Garbage Dump near Sector 4 Market",
-    description: "Waste collection has been delayed for 4 days, causing foul smell and health hazard.",
+    description: "Waste collection delayed for days, causing health hazards.",
     category: "Garbage",
     severity: "High",
     status: "Pending",
-    assignedTo: "Sanitation Lead Priya Sharma",
+    assignedTo: null,
     department: "Sanitation & Waste",
-    location: { latitude: 17.4399, longitude: 78.4983, area: "Secunderabad" },
+    location: { latitude: 17.4399, longitude: 78.4983 },
     isDuplicate: false,
     priorityScore: 88,
-    createdAt: new Date(Date.now() - 18 * 3600 * 1000).toISOString(),
-    updatedAt: new Date(Date.now() - 18 * 3600 * 1000).toISOString(),
-    resolutionHours: null,
+    createdAt: new Date().toISOString(),
   },
   {
     id: "civic-003",
     title: "Broken Streetlight on Park Avenue Lane 3",
-    description: "Dark street corner posing safety risks for night pedestrians and commuters.",
+    description: "Dark street corner posing safety risks for evening pedestrians.",
     category: "Streetlight",
     severity: "Medium",
     status: "Resolved",
     assignedTo: "Officer Ananya Verma",
     department: "Electrical & Lighting",
-    location: { latitude: 17.4239, longitude: 78.4738, area: "Jubilee Hills" },
+    location: { latitude: 17.4239, longitude: 78.4738 },
     isDuplicate: false,
     priorityScore: 65,
-    createdAt: new Date(Date.now() - 96 * 3600 * 1000).toISOString(),
-    updatedAt: new Date(Date.now() - 24 * 3600 * 1000).toISOString(),
-    resolutionHours: 72,
-  },
-  {
-    id: "civic-004",
-    title: "Pipeline Burst and Clean Water Leakage",
-    description: "Continuous potable water wastage spilling over the intersection since morning.",
-    category: "Water Leakage",
-    severity: "High",
-    status: "Assigned",
-    assignedTo: "Officer Suresh Reddy",
-    department: "Water Supply & Sewerage",
-    location: { latitude: 17.3912, longitude: 78.4768, area: "Abids" },
-    isDuplicate: false,
-    priorityScore: 95,
-    createdAt: new Date(Date.now() - 12 * 3600 * 1000).toISOString(),
-    updatedAt: new Date(Date.now() - 2 * 3600 * 1000).toISOString(),
-    resolutionHours: null,
-  },
-  {
-    id: "civic-005",
-    title: "Clogged Drainage during Monsoon Rains",
-    description: "Stormwater drain blocked by construction debris causing ankle-deep waterlogging.",
-    category: "Drainage",
-    severity: "Medium",
-    status: "Resolved",
-    assignedTo: "Officer Rajesh Kumar",
-    department: "Drainage & Stormwater",
-    location: { latitude: 17.4156, longitude: 78.4354, area: "Madhapur" },
-    isDuplicate: false,
-    priorityScore: 70,
-    createdAt: new Date(Date.now() - 120 * 3600 * 1000).toISOString(),
-    updatedAt: new Date(Date.now() - 48 * 3600 * 1000).toISOString(),
-    resolutionHours: 72,
-  },
-  {
-    id: "civic-006",
-    title: "Traffic Light Blinking Red Continuously at Crossroad",
-    description: "Signal control board malfunction causing vehicle gridlock at peak commute hours.",
-    category: "Traffic Signal",
-    severity: "High",
-    status: "Resolved",
-    assignedTo: "Officer Vikram Singh",
-    department: "Traffic & Transport",
-    location: { latitude: 17.4485, longitude: 78.3748, area: "Hitec City" },
-    isDuplicate: false,
-    priorityScore: 89,
-    createdAt: new Date(Date.now() - 48 * 3600 * 1000).toISOString(),
-    updatedAt: new Date(Date.now() - 14 * 3600 * 1000).toISOString(),
-    resolutionHours: 34,
+    createdAt: new Date().toISOString(),
   },
 ];
-
-// Helper: Calculate Power BI Aggregated Metrics
-function computePowerBIMetrics() {
-  const total = complaintsDatabase.length;
-  const pending = complaintsDatabase.filter((c) => c.status === "Pending").length;
-  const assigned = complaintsDatabase.filter((c) => c.status === "Assigned").length;
-  const inProgress = complaintsDatabase.filter((c) => c.status === "In Progress").length;
-  const resolved = complaintsDatabase.filter((c) => c.status === "Resolved").length;
-  const highSeverity = complaintsDatabase.filter((c) => c.severity === "High").length;
-  const duplicates = complaintsDatabase.filter((c) => c.isDuplicate).length;
-
-  const resolutionRate = total > 0 ? Number(((resolved / total) * 100).toFixed(1)) : 0;
-
-  // Average resolution time for resolved items
-  const resolvedList = complaintsDatabase.filter((c) => c.status === "Resolved" && c.resolutionHours);
-  const avgResolutionHours =
-    resolvedList.length > 0
-      ? Number(
-          (
-            resolvedList.reduce((acc, c) => acc + (c.resolutionHours || 0), 0) /
-            resolvedList.length
-          ).toFixed(1)
-        )
-      : 48.0;
-
-  // Category breakdown
-  const categoryDistribution = complaintsDatabase.reduce((acc, c) => {
-    acc[c.category] = (acc[c.category] || 0) + 1;
-    return acc;
-  }, {});
-
-  // Department efficiency breakdown
-  const departmentStats = {};
-  complaintsDatabase.forEach((c) => {
-    const dept = c.department || "General Administration";
-    if (!departmentStats[dept]) {
-      departmentStats[dept] = { total: 0, resolved: 0, pending: 0, highSeverity: 0 };
-    }
-    departmentStats[dept].total++;
-    if (c.status === "Resolved") departmentStats[dept].resolved++;
-    if (c.status === "Pending") departmentStats[dept].pending++;
-    if (c.severity === "High") departmentStats[dept].highSeverity++;
-  });
-
-  return {
-    kpis: {
-      totalComplaints: total,
-      pendingComplaints: pending,
-      assignedComplaints: assigned,
-      inProgressComplaints: inProgress,
-      resolvedComplaints: resolved,
-      highSeverityComplaints: highSeverity,
-      duplicateComplaints: duplicates,
-      resolutionRatePercent: resolutionRate,
-      averageResolutionHours: avgResolutionHours,
-      activeBacklogRatePercent: Number((((pending + inProgress + assigned) / (total || 1)) * 100).toFixed(1)),
-    },
-    categoryDistribution,
-    departmentStats,
-    lastSyncTimestamp: new Date().toISOString(),
-  };
-}
 
 // ---------------------------------------------------------------------------
 // ROUTES
 // ---------------------------------------------------------------------------
 
-// 1. Root & Health Check (Used by Render liveness probe)
+// 1. Health & Root Endpoint (Render Liveness Probe)
 app.get("/", (req, res) => {
   res.status(200).json({
     service: "Crowdsourced Civic Issue Reporting and Resolution System - Backend",
     version: "1.0.0",
+    engine: "Firebase Cloud Firestore & Admin SDK",
     status: "Healthy",
-    powerbi_ready: true,
-    documentation: "/api/v1/powerbi/metrics",
     timestamp: new Date().toISOString(),
   });
 });
@@ -209,136 +93,156 @@ app.get("/health", (req, res) => {
   res.status(200).json({
     status: "UP",
     uptimeSeconds: Math.floor(process.uptime()),
+    firebaseConnected: Boolean(db),
     timestamp: new Date().toISOString(),
   });
 });
 
-// 2. Power BI DirectQuery / Web API Data Feed (JSON format for Power BI REST / OData)
-app.get("/api/v1/powerbi/complaints", (req, res) => {
-  const flattened = complaintsDatabase.map((c) => ({
-    ComplaintID: c.id,
-    Title: c.title,
-    Description: c.description,
-    Category: c.category,
-    Severity: c.severity,
-    SeverityWeight: c.severity === "High" ? 3 : c.severity === "Medium" ? 2 : 1,
-    Status: c.status,
-    IsResolved: c.status === "Resolved" ? 1 : 0,
-    Department: c.department,
-    AssignedOfficer: c.assignedTo || "Unassigned",
-    Area: c.location?.area || "Unspecified",
-    Latitude: c.location?.latitude || null,
-    Longitude: c.location?.longitude || null,
-    PriorityScore: c.priorityScore || 50,
-    IsDuplicate: c.isDuplicate ? 1 : 0,
-    CreatedAt: c.createdAt,
-    UpdatedAt: c.updatedAt,
-    ResolutionHours: c.resolutionHours || 0,
-  }));
-
-  res.status(200).json({
-    value: flattened,
-    "@odata.count": flattened.length,
-    timestamp: new Date().toISOString(),
-  });
-});
-
-// 3. Power BI Aggregated KPI Feed (For Power BI Card visuals, gauges, and summary tiles)
-app.get("/api/v1/powerbi/metrics", (req, res) => {
-  const metrics = computePowerBIMetrics();
-  res.status(200).json(metrics);
-});
-
-// 4. Power BI CSV Streaming Export Endpoint (Instant 1-Click Import into Power BI Desktop)
-app.get("/api/v1/powerbi/export/csv", (req, res) => {
-  const headers = [
-    "ComplaintID",
-    "Title",
-    "Category",
-    "Severity",
-    "Status",
-    "Department",
-    "AssignedOfficer",
-    "Area",
-    "Latitude",
-    "Longitude",
-    "PriorityScore",
-    "IsDuplicate",
-    "CreatedAt",
-    "UpdatedAt",
-    "ResolutionHours",
-  ];
-
-  const rows = complaintsDatabase.map((c) => [
-    `"${c.id}"`,
-    `"${(c.title || "").replace(/"/g, '""')}"`,
-    `"${c.category || ""}"`,
-    `"${c.severity || ""}"`,
-    `"${c.status || ""}"`,
-    `"${c.department || ""}"`,
-    `"${c.assignedTo || "Unassigned"}"`,
-    `"${c.location?.area || ""}"`,
-    c.location?.latitude || "",
-    c.location?.longitude || "",
-    c.priorityScore || 50,
-    c.isDuplicate ? 1 : 0,
-    `"${c.createdAt}"`,
-    `"${c.updatedAt}"`,
-    c.resolutionHours || "",
-  ]);
-
-  const csvContent = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
-
-  res.setHeader("Content-Type", "text/csv");
-  res.setHeader(
-    "Content-Disposition",
-    `attachment; filename="civic_issues_powerbi_${Date.now()}.csv"`
-  );
-  res.status(200).send(csvContent);
-});
-
-// 5. Ingest complaint or sync with frontend
-app.post("/api/v1/complaints/sync", (req, res) => {
-  const complaint = req.body;
-  if (!complaint || !complaint.title) {
-    return res.status(400).json({ error: "Invalid complaint data" });
+// 2. GET All Complaints (from Cloud Firestore)
+app.get("/api/v1/complaints", async (req, res) => {
+  try {
+    if (db) {
+      const snapshot = await db.collection("complaints").orderBy("createdAt", "desc").get();
+      const complaints = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      return res.status(200).json({ complaints, count: complaints.length });
+    }
+  } catch (err) {
+    console.warn("Firestore fetch fallback:", err.message);
   }
 
-  const newEntry = {
-    id: complaint.id || `civic-${String(complaintsDatabase.length + 1).padStart(3, "0")}`,
-    title: complaint.title,
-    description: complaint.description || "",
-    category: complaint.category || complaint.aiCategory || "Other",
-    severity: complaint.severity || complaint.aiSeverity || "Medium",
-    status: complaint.status || "Pending",
-    assignedTo: complaint.assignedTo || null,
-    department: complaint.department || "General Administration",
-    location: complaint.location || { latitude: 0, longitude: 0, area: "Urban" },
-    isDuplicate: Boolean(complaint.isDuplicate),
-    priorityScore: complaint.priorityScore || 50,
-    createdAt: complaint.createdAt || new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    resolutionHours: null,
-  };
-
-  complaintsDatabase.unshift(newEntry);
-  res.status(201).json({
-    message: "Complaint synced successfully with backend and Power BI stream",
-    data: newEntry,
-    totalRecords: complaintsDatabase.length,
-  });
+  // Fallback
+  res.status(200).json({ complaints: fallbackComplaints, count: fallbackComplaints.length });
 });
 
-// 6. Power BI Webhook / Alert Listener (When Power BI alerts trigger on SLA breach)
-app.post("/api/v1/powerbi/alert-webhook", (req, res) => {
-  const alertPayload = req.body;
-  console.log("🚨 [Power BI Alert Received]:", JSON.stringify(alertPayload));
+// 3. POST New Complaint
+app.post("/api/v1/complaints", async (req, res) => {
+  try {
+    const data = req.body;
+    if (!data.title) {
+      return res.status(400).json({ error: "Complaint title is required." });
+    }
 
-  res.status(200).json({
-    success: true,
-    message: "Power BI Alert acknowledged by Civic Issue Backend",
-    receivedAt: new Date().toISOString(),
-  });
+    const newRecord = {
+      ...data,
+      status: data.status || "Pending",
+      createdAt: admin.firestore ? admin.firestore.FieldValue.serverTimestamp() : new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    if (db) {
+      const docRef = await db.collection("complaints").add(newRecord);
+      return res.status(201).json({ id: docRef.id, message: "Complaint created in Firestore." });
+    }
+
+    return res.status(201).json({ id: `civic-${Date.now()}`, message: "Complaint recorded." });
+  } catch (err) {
+    console.error("Create complaint error:", err);
+    res.status(500).json({ error: "Failed to create complaint", message: err.message });
+  }
+});
+
+// 4. PATCH Complaint Status
+app.patch("/api/v1/complaints/:id/status", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    if (!status) {
+      return res.status(400).json({ error: "Status field is required." });
+    }
+
+    if (db) {
+      await db.collection("complaints").doc(id).update({
+        status,
+        updatedAt: new Date().toISOString(),
+      });
+      return res.status(200).json({ success: true, id, status });
+    }
+
+    res.status(200).json({ success: true, id, status });
+  } catch (err) {
+    console.error("Status update error:", err);
+    res.status(500).json({ error: "Failed to update complaint status", message: err.message });
+  }
+});
+
+// 5. PATCH Assign Officer
+app.patch("/api/v1/complaints/:id/assign", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { officerId, officerName } = req.body;
+
+    if (!officerId && !officerName) {
+      return res.status(400).json({ error: "Officer information is required." });
+    }
+
+    if (db) {
+      await db.collection("complaints").doc(id).update({
+        assignedTo: officerName || officerId,
+        status: "Assigned",
+        updatedAt: new Date().toISOString(),
+      });
+      return res.status(200).json({ success: true, id, assignedTo: officerName || officerId });
+    }
+
+    res.status(200).json({ success: true, id, assignedTo: officerName || officerId });
+  } catch (err) {
+    console.error("Assignment error:", err);
+    res.status(500).json({ error: "Failed to assign officer", message: err.message });
+  }
+});
+
+// 6. GET Aggregated Civic Analytics
+app.get("/api/v1/analytics/stats", async (req, res) => {
+  try {
+    let list = fallbackComplaints;
+
+    if (db) {
+      const snapshot = await db.collection("complaints").get();
+      if (!snapshot.empty) {
+        list = snapshot.docs.map((doc) => doc.data());
+      }
+    }
+
+    const total = list.length;
+    let pending = 0;
+    let assigned = 0;
+    let inProgress = 0;
+    let resolved = 0;
+    const categoryCount = {};
+    const severityCount = { Low: 0, Medium: 0, High: 0 };
+
+    list.forEach((c) => {
+      if (c.status === "Pending") pending++;
+      if (c.status === "Assigned") assigned++;
+      if (c.status === "In Progress") inProgress++;
+      if (c.status === "Resolved") resolved++;
+
+      const cat = c.category || c.aiCategory || "Other";
+      categoryCount[cat] = (categoryCount[cat] || 0) + 1;
+
+      const sev = c.severity || c.aiSeverity || "Low";
+      if (severityCount[sev] !== undefined) severityCount[sev]++;
+    });
+
+    res.status(200).json({
+      total,
+      pending,
+      assigned,
+      inProgress,
+      resolved,
+      resolutionRate: total > 0 ? Number(((resolved / total) * 100).toFixed(1)) : 0,
+      categoryCount,
+      severityCount,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (err) {
+    console.error("Analytics error:", err);
+    res.status(500).json({ error: "Failed to aggregate analytics", message: err.message });
+  }
 });
 
 // 7. General API Status
@@ -346,14 +250,13 @@ app.get("/api/v1/status", (req, res) => {
   res.status(200).json({
     status: "Operational",
     backendVersion: "1.0.0",
-    powerbiConnected: true,
-    totalLiveComplaints: complaintsDatabase.length,
+    firebaseProject: "civic-ai-97ef1",
     endpoints: {
-      powerbi_complaints_json: "/api/v1/powerbi/complaints",
-      powerbi_metrics: "/api/v1/powerbi/metrics",
-      powerbi_csv_export: "/api/v1/powerbi/export/csv",
-      complaint_sync: "/api/v1/complaints/sync",
-      alert_webhook: "/api/v1/powerbi/alert-webhook",
+      complaints: "/api/v1/complaints",
+      create_complaint: "POST /api/v1/complaints",
+      update_status: "PATCH /api/v1/complaints/:id/status",
+      assign_officer: "PATCH /api/v1/complaints/:id/assign",
+      analytics_stats: "/api/v1/analytics/stats",
     },
   });
 });
@@ -372,10 +275,9 @@ app.use((err, req, res, next) => {
 // Start Server
 app.listen(PORT, () => {
   console.log(`====================================================`);
-  console.log(`🚀 Civic Issue Backend & Power BI Service Running`);
+  console.log(`🔥 Civic Issue Backend Running with Firebase Cloud`);
   console.log(`📍 Port: http://localhost:${PORT}`);
-  console.log(`📊 Power BI JSON Feed: http://localhost:${PORT}/api/v1/powerbi/complaints`);
-  console.log(`📥 Power BI CSV Export: http://localhost:${PORT}/api/v1/powerbi/export/csv`);
-  console.log(`📈 Power BI Metrics: http://localhost:${PORT}/api/v1/powerbi/metrics`);
+  console.log(`📋 Complaints: http://localhost:${PORT}/api/v1/complaints`);
+  console.log(`📊 Analytics: http://localhost:${PORT}/api/v1/analytics/stats`);
   console.log(`====================================================`);
 });

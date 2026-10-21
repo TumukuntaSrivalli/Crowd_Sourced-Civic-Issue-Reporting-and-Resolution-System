@@ -1,20 +1,19 @@
 {
   "name": "civic-issue-backend",
   "version": "1.0.0",
-  "description": "Backend API & Power BI Analytics Data Service for Civic Issue Reporting and Resolution System",
+  "description": "Backend API & Firebase Cloud Firestore Data Service for Civic Issue Reporting and Resolution System",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "node --watch server.js",
-    "powerbi:sync": "node powerbi/powerbi_sync_service.js"
+    "dev": "node --watch server.js"
   },
   "dependencies": {
     "compression": "^1.7.5",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
+    "firebase-admin": "^13.2.0",
     "helmet": "^8.0.0",
-    "json2csv": "^6.0.0-alpha.2",
     "morgan": "^1.10.0"
   },
   "engines": {
@@ -22,8 +21,8 @@
   },
   "keywords": [
     "civic-issue",
-    "powerbi",
-    "analytics",
+    "firebase",
+    "firestore",
     "rest-api",
     "express",
     "render-deploy"

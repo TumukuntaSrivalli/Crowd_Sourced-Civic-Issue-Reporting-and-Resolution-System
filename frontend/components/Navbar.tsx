@@ -116,7 +116,7 @@ export default function Navbar() {
                     : "text-slate-600 dark:text-slate-300 hover:bg-slate-100/70 dark:hover:bg-slate-800/70 hover:text-slate-900 dark:hover:text-white"
                 }`}
               >
-                Analytics & Power BI
+                Municipal Analytics
               </Link>
             </>
           )}

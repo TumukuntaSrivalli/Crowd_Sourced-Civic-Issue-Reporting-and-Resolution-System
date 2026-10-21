@@ -1,7 +1,7 @@
 # Render Blueprint Specification
-# Deploy both Backend (Power BI / REST API) and Frontend (Next.js) seamlessly on Render
+# Deploy both Backend (Firebase Cloud Firestore REST API) and Frontend (Next.js 16) on Render
 services:
-  # 1. Civic Backend & Power BI Service
+  # 1. Civic Backend & Firebase Service
   - type: web
     name: civic-issue-backend
     env: node
@@ -16,7 +16,11 @@ services:
         value: production
       - key: PORT
         value: 10000
-      - key: POWERBI_STREAMING_PUSH_URL
+      - key: FIREBASE_PROJECT_ID
+        value: civic-ai-97ef1
+      - key: FIREBASE_CLIENT_EMAIL
+        sync: false
+      - key: FIREBASE_PRIVATE_KEY
         sync: false
       - key: FRONTEND_ORIGIN
         sync: false
