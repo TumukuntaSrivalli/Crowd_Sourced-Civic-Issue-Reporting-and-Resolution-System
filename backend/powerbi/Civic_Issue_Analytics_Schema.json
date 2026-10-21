@@ -1,0 +1,48 @@
+{
+  "name": "CivicIssueAnalyticsDataset",
+  "defaultMode": "Push",
+  "tables": [
+    {
+      "name": "Complaints",
+      "columns": [
+        { "name": "ComplaintID", "dataType": "string" },
+        { "name": "Title", "dataType": "string" },
+        { "name": "Description", "dataType": "string" },
+        { "name": "Category", "dataType": "string" },
+        { "name": "Severity", "dataType": "string" },
+        { "name": "SeverityWeight", "dataType": "Int64" },
+        { "name": "Status", "dataType": "string" },
+        { "name": "IsResolved", "dataType": "Int64" },
+        { "name": "Department", "dataType": "string" },
+        { "name": "AssignedOfficer", "dataType": "string" },
+        { "name": "Area", "dataType": "string" },
+        { "name": "Latitude", "dataType": "Double" },
+        { "name": "Longitude", "dataType": "Double" },
+        { "name": "PriorityScore", "dataType": "Int64" },
+        { "name": "IsDuplicate", "dataType": "Int64" },
+        { "name": "CreatedAt", "dataType": "DateTime" },
+        { "name": "UpdatedAt", "dataType": "DateTime" },
+        { "name": "ResolutionHours", "dataType": "Double" }
+      ]
+    },
+    {
+      "name": "Departments",
+      "columns": [
+        { "name": "DepartmentID", "dataType": "string" },
+        { "name": "DepartmentName", "dataType": "string" },
+        { "name": "HeadOfficer", "dataType": "string" },
+        { "name": "TargetSLA_Hours", "dataType": "Int64" }
+      ]
+    },
+    {
+      "name": "ResolutionMetrics",
+      "columns": [
+        { "name": "MetricDate", "dataType": "DateTime" },
+        { "name": "TotalReported", "dataType": "Int64" },
+        { "name": "TotalResolved", "dataType": "Int64" },
+        { "name": "HighSeverityCount", "dataType": "Int64" },
+        { "name": "AverageResolutionHours", "dataType": "Double" }
+      ]
+    }
+  ]
+}

@@ -25,19 +25,31 @@ export interface Complaint {
 
   title: string;
   description: string;
-
-  category: ComplaintCategory;
-  severity: ComplaintSeverity;
+  category: string;
   status: ComplaintStatus;
-
-  imageUrl?: string;
-
-  latitude: number;
-  longitude: number;
-  address: string;
+  severity: string;
 
   userId: string;
 
-  createdAt?: Date;
-  updatedAt?: Date;
+  assignedTo?: string;
+
+department?: string;
+
+recommendedOfficer?: string;
+
+priorityScore?: number;
+  aiCategory?: string;
+  aiSeverity?: "Low" | "Medium" | "High";
+  aiConfidence?: number;
+  isDuplicate?: boolean;
+  aiSummary?: string;
+
+  createdAt?: any;
+  updatedAt?: any;
+  imageUrl?: string;
+
+  location: {
+    latitude: number;
+    longitude: number;
+  };
 }

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import Link from "next/link";
 import { registerUser } from "@/services/authService";
 import { createUserProfile } from "@/services/userService";
 
@@ -11,138 +12,176 @@ interface RegisterFormData {
   email: string;
   password: string;
   confirmPassword: string;
+  role: "citizen" | "officer";
 }
 
 export default function RegisterPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
 
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<RegisterFormData>();
+  } = useForm<RegisterFormData>({
+    defaultValues: {
+      role: "citizen",
+    },
+  });
 
   const onSubmit = async (data: RegisterFormData) => {
+    setErrorMsg("");
+
     if (data.password !== data.confirmPassword) {
-      alert("Passwords do not match.");
+      setErrorMsg("Passwords do not match.");
+      return;
+    }
+
+    if (data.password.length < 6) {
+      setErrorMsg("Password must be at least 6 characters.");
       return;
     }
 
     try {
       setLoading(true);
 
-    const user = await registerUser(
-        data.fullName,
-        data.email,
-        data.password
-        );
+      const user = await registerUser(data.fullName, data.email, data.password);
 
-        await createUserProfile({
+      await createUserProfile({
         uid: user.uid,
         fullName: data.fullName,
         email: data.email,
-        role: "Citizen",
-        });
+        role: data.role || "citizen",
+      });
 
-      alert("Registration Successful!");
-
+      alert("Registration successful! Please login.");
       reset();
-
-      router.push("/dashboard");
+      router.push("/login");
     } catch (error: any) {
-      alert(error.message);
+      setErrorMsg(error.message || "Failed to register. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-gray-100">
-      <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-lg">
-        <h1 className="mb-6 text-center text-3xl font-bold">
-          Create Account
-        </h1>
+    <main className="min-h-screen bg-slate-50 dark:bg-[#07090e] text-slate-900 dark:text-slate-100 flex items-center justify-center p-4 sm:p-6 transition-colors duration-200">
+      <div className="w-full max-w-md rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-8 shadow-xl backdrop-blur-md">
+        {/* Header */}
+        <div className="text-center mb-6">
+          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-tr from-sky-500 to-indigo-600 text-white shadow-md shadow-sky-500/20">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+            </svg>
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+            Create an Account
+          </h1>
+          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+            Join the crowdsourced civic action platform
+          </p>
+        </div>
+
+        {errorMsg && (
+          <div className="mb-6 rounded-xl border border-rose-200 dark:border-rose-900/50 bg-rose-50 dark:bg-rose-950/40 p-3 text-xs text-rose-700 dark:text-rose-300">
+            {errorMsg}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-
           <div>
+            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+              Full Name
+            </label>
             <input
               type="text"
-              placeholder="Full Name"
-              {...register("fullName", {
-                required: "Full Name is required",
-              })}
-              className="w-full rounded border p-3"
+              placeholder="e.g. Ramesh Patel"
+              {...register("fullName", { required: "Full name is required" })}
+              className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 px-4 py-2.5 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition"
             />
             {errors.fullName && (
-              <p className="text-sm text-red-500">
-                {errors.fullName.message}
-              </p>
+              <p className="mt-1 text-xs text-rose-500">{errors.fullName.message}</p>
             )}
           </div>
 
           <div>
+            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+              Email Address
+            </label>
             <input
               type="email"
-              placeholder="Email"
-              {...register("email", {
-                required: "Email is required",
-              })}
-              className="w-full rounded border p-3"
+              placeholder="you@domain.com"
+              {...register("email", { required: "Email is required" })}
+              className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 px-4 py-2.5 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition"
             />
             {errors.email && (
-              <p className="text-sm text-red-500">
-                {errors.email.message}
-              </p>
+              <p className="mt-1 text-xs text-rose-500">{errors.email.message}</p>
             )}
           </div>
 
-          <div>
-            <input
-              type="password"
-              placeholder="Password"
-              {...register("password", {
-                required: "Password is required",
-                minLength: {
-                  value: 6,
-                  message: "Minimum 6 characters",
-                },
-              })}
-              className="w-full rounded border p-3"
-            />
-            {errors.password && (
-              <p className="text-sm text-red-500">
-                {errors.password.message}
-              </p>
-            )}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+                Password
+              </label>
+              <input
+                type="password"
+                placeholder="••••••••"
+                {...register("password", { required: "Password is required" })}
+                className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 px-4 py-2.5 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 outline-none focus:border-sky-500 transition"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+                Confirm
+              </label>
+              <input
+                type="password"
+                placeholder="••••••••"
+                {...register("confirmPassword", { required: "Confirm password is required" })}
+                className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 px-4 py-2.5 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 outline-none focus:border-sky-500 transition"
+              />
+            </div>
           </div>
 
           <div>
-            <input
-              type="password"
-              placeholder="Confirm Password"
-              {...register("confirmPassword", {
-                required: "Confirm your password",
-              })}
-              className="w-full rounded border p-3"
-            />
-            {errors.confirmPassword && (
-              <p className="text-sm text-red-500">
-                {errors.confirmPassword.message}
-              </p>
-            )}
+            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+              Account Role
+            </label>
+            <select
+              {...register("role")}
+              className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 px-4 py-2.5 text-sm text-slate-900 dark:text-slate-100 outline-none focus:border-sky-500 transition"
+            >
+              <option value="citizen">Citizen (Report & Track Issues)</option>
+              <option value="officer">Municipal Officer (Field Resolution)</option>
+            </select>
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded bg-blue-600 p-3 text-white hover:bg-blue-700"
+            className="w-full mt-2 rounded-xl bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 py-3 text-sm font-semibold text-white shadow-md hover:shadow-sky-500/25 transition disabled:opacity-50 flex items-center justify-center gap-2"
           >
-            {loading ? "Creating Account..." : "Register"}
+            {loading ? (
+              <>
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                <span>Creating Account...</span>
+              </>
+            ) : (
+              "Create Account"
+            )}
           </button>
         </form>
+
+        <p className="mt-6 text-center text-xs text-slate-600 dark:text-slate-400">
+          Already have an account?{" "}
+          <Link href="/login" className="font-semibold text-sky-600 dark:text-sky-400 hover:underline">
+            Sign In
+          </Link>
+        </p>
       </div>
     </main>
   );

@@ -12,7 +12,7 @@ export interface UserData {
   uid: string;
   fullName: string;
   email: string;
-  role: "Citizen" | "Officer" | "Admin";
+  role: "citizen" | "officer" | "admin";
   phone?: string;
   profileImage?: string;
 }
