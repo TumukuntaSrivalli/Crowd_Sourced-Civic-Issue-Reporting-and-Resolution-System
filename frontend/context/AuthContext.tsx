@@ -62,6 +62,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
         if (userSnap.exists()) {
           role = userSnap.data()?.role || "citizen";
+        } else if (currentUser.email?.startsWith("admin@")) {
+          role = "admin";
+        } else if (currentUser.email?.startsWith("officer@")) {
+          role = "officer";
         }
 
         // 🔥 Build final user object

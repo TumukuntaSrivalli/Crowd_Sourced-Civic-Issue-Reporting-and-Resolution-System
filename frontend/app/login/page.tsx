@@ -19,9 +19,25 @@ export default function LoginPage() {
     try {
       setLoading(true);
       await loginUser(email, password);
-      router.push("/dashboard");
+      
+      if (email.startsWith("officer@")) {
+        router.push("/officer/dashboard");
+      } else if (email.startsWith("admin@")) {
+        router.push("/admin/dashboard");
+      } else {
+        router.push("/dashboard");
+      }
     } catch (error: any) {
-      setErrorMsg(error.message || "Failed to log in. Please check your credentials.");
+      console.error("Login error:", error);
+      let msg = error.message;
+      if (
+        error.code === "auth/invalid-credential" ||
+        error.code === "auth/user-not-found" ||
+        error.code === "auth/wrong-password"
+      ) {
+        msg = "Account not found or password incorrect. Please register first or click one of the quick fill demo buttons below!";
+      }
+      setErrorMsg(msg || "Failed to log in. Please check your credentials.");
     } finally {
       setLoading(false);
     }
